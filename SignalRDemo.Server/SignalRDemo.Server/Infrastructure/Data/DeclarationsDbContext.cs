@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SignalRDemo.Server.Models;
 
-namespace SignalRDemo.Server.Data;
+namespace SignalRDemo.Server.Infrastructure.Data;
 
-public class SignalRDemoDbContext : IdentityDbContext
+public class DeclarationsDbContext : IdentityDbContext
 {
     public DbSet<Declaration> Declarations { get; protected set; } = null!;
     public DbSet<Jurisdiction> Jurisdictions { get; protected set; } = null!;

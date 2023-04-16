@@ -1,6 +1,8 @@
+using MediatR;
+
 namespace SignalRDemo.Server.Dto;
 
-public class UpdateDeclarationRequest
+public class UpdateDeclarationRequest : IRequest<DeclarationDto>
 {
     public string Id { get; set; } = null!;
     public string Description { get; set; } = null!;

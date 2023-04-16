@@ -2,7 +2,7 @@ using AutoMapper;
 using SignalRDemo.Server.Dto;
 using SignalRDemo.Server.Models;
 
-namespace SignalRDemo.Server.Mapping;
+namespace SignalRDemo.Server.Infrastructure.Mapping;
 
 public class MappingProfile : Profile
 {
