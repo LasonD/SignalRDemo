@@ -1,7 +1,8 @@
 namespace SignalRDemo.Server.Dto;
 
 public class CreateDeclarationRequest
-{ 
-    public string Description { get; set; }
-    public string Jurisdiction { get; set; }
+{
+    public string DeclarantId { get; set; } = null!;
+    public string Description { get; set; } = null!;
+    public string Jurisdiction { get; set; } = null!;
 }
