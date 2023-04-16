@@ -14,6 +14,3 @@ public class DeclarationsHub : Hub<IDeclarationsHub>
         await Clients.All.Notify(text);
     }
 }
-
-
-

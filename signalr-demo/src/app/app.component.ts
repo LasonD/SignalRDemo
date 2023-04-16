@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'signalr-demo';
+  constructor(private router: Router) {
+
+  }
+
+  public onDeclarationsSelected() {
+    this.router.navigate(['declarations']);
+  }
+
+  public onStatisticsSelected() {
+    this.router.navigate(['statistics']);
+  }
 }
