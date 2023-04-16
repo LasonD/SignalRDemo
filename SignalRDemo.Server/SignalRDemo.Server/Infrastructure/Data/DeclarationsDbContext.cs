@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SignalRDemo.Server.Models;
+using SignalRDemo.Server.Application.Models;
 
 namespace SignalRDemo.Server.Infrastructure.Data;
 

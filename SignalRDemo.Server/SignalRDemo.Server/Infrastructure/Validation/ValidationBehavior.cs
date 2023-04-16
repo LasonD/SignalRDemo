@@ -31,7 +31,7 @@ public sealed class ValidationBehavior<TResponse> : IPipelineBehavior<IRequest<T
             }
         }
 
-        if (errors.Any())
+        if (errors.Count != 0)
         {
             throw new ValidationException(errors);
         }

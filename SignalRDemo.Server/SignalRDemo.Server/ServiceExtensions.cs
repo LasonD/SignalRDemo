@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using SignalRDemo.Server.Commands;
-using SignalRDemo.Server.Data;
-using SignalRDemo.Server.Helpers;
+using SignalRDemo.Server.Application.Commands;
+using SignalRDemo.Server.Application.Models;
+using SignalRDemo.Server.Common.Helpers;
+using SignalRDemo.Server.Infrastructure.Data;
 using SignalRDemo.Server.Infrastructure.Validation;
-using SignalRDemo.Server.Models;
 
 namespace SignalRDemo.Server;
 

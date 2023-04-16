@@ -1,4 +1,4 @@
-namespace SignalRDemo.Server.Models;
+namespace SignalRDemo.Server.Application.Models;
 
 public class Jurisdiction
 {

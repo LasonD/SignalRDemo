@@ -1,4 +1,4 @@
-﻿namespace SignalRDemo.Server.Helpers;
+﻿namespace SignalRDemo.Server.Common.Helpers;
 
 public static class JwtConfigExtensions
 {

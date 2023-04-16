@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 
-namespace SignalRDemo.Server.Hubs;
+namespace SignalRDemo.Server.Api.Hubs;
 
 public interface IDeclarationsHub
 {

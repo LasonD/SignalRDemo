@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using SignalRDemo.Server.Hubs;
+using SignalRDemo.Server.Api.Hubs;
+using SignalRDemo.Server.Application.Dto;
 
-namespace SignalRDemo.Server.Controllers;
+namespace SignalRDemo.Server.Api.Controllers;
 
 [ApiController]
 public class DeclarationsController : ControllerBase
@@ -15,10 +16,10 @@ public class DeclarationsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateDeclaration(DeclarationsHub declaration, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateDeclaration(CreateDeclarationDto declaration, CancellationToken cancellationToken)
     {
         await _declarationsHubContext.Clients.All.SendAsync("DeclarationCreated", declaration, cancellationToken);
-        
+
         return Ok(declaration);
     }
 }

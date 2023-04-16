@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using SignalRDemo.Server.Commands;
-using SignalRDemo.Server.Dto;
+using SignalRDemo.Server.Application.Commands;
+using SignalRDemo.Server.Application.Dto.Auth;
 
-namespace SignalRDemo.Server.Controllers;
+namespace SignalRDemo.Server.Api.Controllers;
 
 [ApiController]
 public class AuthController : ControllerBase

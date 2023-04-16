@@ -1,4 +1,4 @@
-namespace SignalRDemo.Server.Dto;
+namespace SignalRDemo.Server.Application.Dto.Auth;
 
 public class AuthResult
 {

@@ -3,12 +3,12 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using SignalRDemo.Server.Dto;
-using SignalRDemo.Server.Exceptions;
-using SignalRDemo.Server.Helpers;
-using SignalRDemo.Server.Models;
+using SignalRDemo.Server.Application.Dto.Auth;
+using SignalRDemo.Server.Application.Exceptions;
+using SignalRDemo.Server.Application.Models;
+using SignalRDemo.Server.Common.Helpers;
 
-namespace SignalRDemo.Server.Commands;
+namespace SignalRDemo.Server.Application.Commands;
 
 public interface IAuthService
 {

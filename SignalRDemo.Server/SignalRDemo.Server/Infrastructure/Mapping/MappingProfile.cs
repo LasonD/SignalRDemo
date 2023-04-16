@@ -1,6 +1,7 @@
 using AutoMapper;
-using SignalRDemo.Server.Dto;
-using SignalRDemo.Server.Models;
+using SignalRDemo.Server.Application.Commands;
+using SignalRDemo.Server.Application.Dto;
+using SignalRDemo.Server.Application.Models;
 
 namespace SignalRDemo.Server.Infrastructure.Mapping;
 
@@ -21,5 +22,8 @@ public class MappingProfile : Profile
             .ForMember(x => x.DisplayColor,
                 opt => opt.MapFrom(src => src.Jurisdiction.DisplayColor)
             );
+
+        CreateMap<CreateDeclarationDto, CreateDeclaration.Command>();
+        CreateMap<UpdateDeclarationDto, UpdateDeclaration.Command>();
     }
 }

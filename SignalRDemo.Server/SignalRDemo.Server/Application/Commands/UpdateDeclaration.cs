@@ -2,17 +2,18 @@ using AutoMapper;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using SignalRDemo.Server.Data;
-using SignalRDemo.Server.Dto;
-using SignalRDemo.Server.Models;
+using SignalRDemo.Server.Application.Dto;
+using SignalRDemo.Server.Application.Exceptions;
+using SignalRDemo.Server.Application.Models;
+using SignalRDemo.Server.Infrastructure.Data;
 
-namespace SignalRDemo.Server.Commands;
+namespace SignalRDemo.Server.Application.Commands;
 
-public class CreateDeclaration
+public class UpdateDeclaration
 {
     public class Command : IRequest<DeclarationDto>
     {
-        public string DeclarantId { get; set; } = null!;
+        public string Id { get; set; } = null!;
         public string Description { get; set; } = null!;
         public string Jurisdiction { get; set; } = null!;
     }
@@ -32,7 +33,7 @@ public class CreateDeclaration
                 .NotEmpty()
                 .WithName("Declaration should have non-empty jurisdiction.")
                 .Must(x => user?.HasClaim(c => c.Type == Constants.JurisdictionClaimType && c.Value == x) ?? false)
-                .WithMessage(x => $"You are not authorized to create declarations for {x} jurisdiction.")
+                .WithMessage(x => $"Cannot update jurisdiction. You are not authorized to create declarations for {x} jurisdiction.")
                 .MustAsync((x, ct) => dbContext.Jurisdictions.AnyAsync(j => j.Code == x, ct))
                 .WithMessage(x => $"{x.Jurisdiction} is not a known jurisdiction.");
         }
@@ -51,16 +52,20 @@ public class CreateDeclaration
 
         public async Task<DeclarationDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            var newDeclaration = new Declaration()
+            var declaration = await _dbContext.Declarations.FindAsync(request.Id, cancellationToken);
+
+            if (declaration == null)
             {
-                Description = request.Description,
-                Jurisdiction = new Jurisdiction(request.Jurisdiction),
-                DeclarantId = request.DeclarantId
-            };
+                throw new NotFoundException(request.Id, nameof(Declaration));
+            }
 
-            await _dbContext.Declarations.AddAsync(newDeclaration, cancellationToken);
+            _mapper.Map(request, declaration);
 
-            return _mapper.Map<DeclarationDto>(newDeclaration);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            var dto = _mapper.Map<DeclarationDto>(declaration);
+
+            return dto;
         }
     }
 }

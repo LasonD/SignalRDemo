@@ -1,4 +1,4 @@
-namespace SignalRDemo.Server.Exceptions;
+namespace SignalRDemo.Server.Application.Exceptions;
 
 public class AuthException : Exception
 {
