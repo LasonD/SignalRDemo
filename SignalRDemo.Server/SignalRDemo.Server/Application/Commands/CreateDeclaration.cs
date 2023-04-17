@@ -17,6 +17,7 @@ public static class CreateDeclaration
         public string DeclarantId { get; set; } = null!;
         public string Description { get; set; } = null!;
         public string Jurisdiction { get; set; } = null!;
+        public decimal NetMass { get; set; }
     }
 
     public class Validator : AbstractValidator<Command>
@@ -37,6 +38,10 @@ public static class CreateDeclaration
                 .WithMessage(x => $"You are not authorized to create declarations for {x} jurisdiction.")
                 .MustAsync((x, ct) => dbContext.Jurisdictions.AnyAsync(j => j.Code == x, ct))
                 .WithMessage(x => $"{x.Jurisdiction} is not a known jurisdiction.");
+
+            RuleFor(x => x.NetMass)
+                .GreaterThan(0)
+                .WithMessage("Declaration should have a positive NetMass.");
         }
     }
 
@@ -44,9 +49,9 @@ public static class CreateDeclaration
     {
         private readonly IMapper _mapper;
         private readonly DeclarationsDbContext _dbContext;
-        private readonly IHubContext<DeclarationsHub> _declarationsHubContext;
+        private readonly IHubContext<DeclarationsHub, IDeclarationsHub> _declarationsHubContext;
 
-        public Handler(IMapper mapper, DeclarationsDbContext dbContext, IHubContext<DeclarationsHub> declarationsHubContext)
+        public Handler(IMapper mapper, DeclarationsDbContext dbContext, IHubContext<DeclarationsHub, IDeclarationsHub> declarationsHubContext)
         {
             _mapper = mapper;
             _dbContext = dbContext;
@@ -59,6 +64,7 @@ public static class CreateDeclaration
             {
                 Description = request.Description,
                 Jurisdiction = new Jurisdiction(request.Jurisdiction),
+                NetMass = request.NetMass,
                 DeclarantId = request.DeclarantId
             };
 
@@ -67,6 +73,10 @@ public static class CreateDeclaration
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             var dto = _mapper.Map<DeclarationDto>(newDeclaration);
+
+            await _declarationsHubContext.Clients.Group($"Jurisdiction_{request.Jurisdiction}").DeclarationCreated(dto);
+
+            return dto;
         }
     }
 }
