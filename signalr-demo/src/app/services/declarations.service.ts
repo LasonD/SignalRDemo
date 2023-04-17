@@ -32,6 +32,46 @@ export class DeclarationsService {
       description: "Test declaration 3",
       displayColor: "blue",
       jurisdiction: "GB",
+    },
+    {
+      id: "declarationId3",
+      declarantId: "declarantId3",
+      declarantEmail: "test4@gmail.com",
+      description: "Test declaration 3",
+      displayColor: "blue",
+      jurisdiction: "GB",
+    },
+    {
+      id: "declarationId3",
+      declarantId: "declarantId3",
+      declarantEmail: "test4@gmail.com",
+      description: "Test declaration 3",
+      displayColor: "orange",
+      jurisdiction: "GB",
+    },
+    {
+      id: "declarationId3",
+      declarantId: "declarantId3",
+      declarantEmail: "test4@gmail.com",
+      description: "Test declaration 3",
+      displayColor: "blue",
+      jurisdiction: "GB",
+    },
+    {
+      id: "declarationId3",
+      declarantId: "declarantId3",
+      declarantEmail: "test4@gmail.com",
+      description: "Test declaration 3",
+      displayColor: "green",
+      jurisdiction: "GB",
+    },
+    {
+      id: "declarationId3",
+      declarantId: "declarantId3",
+      declarantEmail: "test4@gmail.com",
+      description: "Test declaration 3",
+      displayColor: "red",
+      jurisdiction: "GB",
     }
   ];
 
