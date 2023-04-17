@@ -1,3 +1,7 @@
 <div class="declarations-container">
-  <app-declaration *ngFor="let declaration of declarations" [declaration]="declaration" class="declaration-item"></app-declaration>
+  <app-declaration *ngFor="let declaration of declarations"
+                   [declaration]="declaration"
+                   class="declaration-item"
+                   [ngStyle]="{'flex-basis': getRandomWidth(30, 40)}"
+  ></app-declaration>
 </div>

@@ -17,4 +17,9 @@ export class DeclarationsListComponent {
       .getDeclarations()
       .subscribe((declarations) => (this.declarations = declarations));
   }
+
+  getRandomWidth(minWidth: number, maxWidth: number): string {
+    const width = Math.floor(Math.random() * (maxWidth - minWidth + 1) + minWidth);
+    return `${width}%`;
+  }
 }

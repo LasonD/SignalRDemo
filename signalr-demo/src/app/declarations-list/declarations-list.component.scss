@@ -9,7 +9,7 @@
 .declaration-item {
   position: relative;
   transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
-  flex: 0 1 calc(33.333% - 16px); // adjust the percentage value to control the number of items per row
+  flex: 0 1 auto;
 }
 
 .declaration-item:hover {
