@@ -1,11 +1,28 @@
-<div class="card text-white mb-3" [ngStyle]="{'background-color': getTransparentBackgroundColor()}">
+<div class="card text-dark mb-3 p-3" [style.background-color]="getBackgroundColor()">
   <div class="card-body">
-    <h5 class="card-title">{{ declaration.jurisdiction }}</h5>
-    <p class="card-text" *ngIf="!editMode">{{ declaration.description }}</p>
-    <textarea class="form-control" [(ngModel)]="declaration.description" *ngIf="editMode"></textarea>
+    <h5 class="card-title mb-4">
+      <span class="field-name">Jurisdiction:</span>
+      <span *ngIf="!editMode" class="field-value">{{ declaration.jurisdiction }}</span>
+      <select [(ngModel)]="declaration.jurisdiction" *ngIf="editMode" class="form-select edit-mode-margin">
+        <option *ngFor="let jurisdiction of jurisdictions" [value]="jurisdiction">{{ jurisdiction }}</option>
+      </select>
+    </h5>
+    <p class="card-text" *ngIf="!editMode">
+      <span class="field-name mb-2">Description:</span>
+      <span class="field-value">{{ declaration.description }}</span>
+    </p>
+    <div *ngIf="editMode" class="edit-mode-margin mb-3">
+      <span class="field-name mb-2">Description:</span>
+      <textarea class="form-control" [(ngModel)]="declaration.description"></textarea>
+    </div>
+    <p class="card-text">
+      <span class="field-name">Declarant Email:</span>
+      <span class="field-value">{{ declaration.declarantEmail }}</span>
+    </p>
     <div class="d-flex justify-content-between mt-3">
-      <button class="btn btn-primary" (click)="toggleEditMode()" *ngIf="!editMode">Edit</button>
-      <button class="btn btn-success" (click)="saveDeclaration()" *ngIf="editMode">Save</button>
+      <button class="btn btn-primary stylish-btn" (click)="toggleEditMode()" *ngIf="!editMode">Edit</button>
+      <button class="btn btn-success stylish-btn" (click)="saveChanges()" *ngIf="editMode">Save</button>
+      <button class="btn btn-secondary stylish-btn" (click)="cancelEdit()" *ngIf="editMode">Cancel</button>
     </div>
   </div>
 </div>

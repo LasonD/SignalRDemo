@@ -1,7 +1,27 @@
 .card {
   border-radius: 10px;
+  transition: all 0.1s;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   &:hover {
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
   }
+}
+
+.field-name {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.field-value {
+  font-style: italic;
+}
+
+.stylish-btn {
+  border-radius: 10px;
+  padding: 6px 20px;
+  font-weight: 400;
+}
+
+.edit-mode-margin {
+  margin-top: 15px;
 }

@@ -1,0 +1,16 @@
+.declarations-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.declaration-item {
+  position: relative;
+  width: 80%;
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.declaration-item:hover {
+  transform: translateY(-2px);
+}
