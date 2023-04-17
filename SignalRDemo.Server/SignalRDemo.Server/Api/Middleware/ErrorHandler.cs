@@ -1,7 +1,7 @@
 using FluentValidation;
 using SignalRDemo.Server.Application.Exceptions;
-using SignalRDemo.Server.Dto;
 using System.Net;
+using SignalRDemo.Server.Application.Dto;
 
 namespace SignalRDemo.Server.Api.Middleware;
 

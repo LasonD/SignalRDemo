@@ -1,0 +1,11 @@
+<div class="card text-white mb-3" [ngStyle]="{'background-color': getTransparentBackgroundColor()}">
+  <div class="card-body">
+    <h5 class="card-title">{{ declaration.jurisdiction }}</h5>
+    <p class="card-text" *ngIf="!editMode">{{ declaration.description }}</p>
+    <textarea class="form-control" [(ngModel)]="declaration.description" *ngIf="editMode"></textarea>
+    <div class="d-flex justify-content-between mt-3">
+      <button class="btn btn-primary" (click)="toggleEditMode()" *ngIf="!editMode">Edit</button>
+      <button class="btn btn-success" (click)="saveDeclaration()" *ngIf="editMode">Save</button>
+    </div>
+  </div>
+</div>

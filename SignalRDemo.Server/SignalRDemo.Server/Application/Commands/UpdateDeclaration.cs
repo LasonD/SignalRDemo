@@ -9,7 +9,7 @@ using SignalRDemo.Server.Infrastructure.Data;
 
 namespace SignalRDemo.Server.Application.Commands;
 
-public class UpdateDeclaration
+public static class UpdateDeclaration
 {
     public class Command : IRequest<DeclarationDto>
     {

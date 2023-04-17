@@ -1,25 +1,40 @@
+using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using SignalRDemo.Server.Api.Hubs;
+using SignalRDemo.Server.Application.Commands;
 using SignalRDemo.Server.Application.Dto;
 
 namespace SignalRDemo.Server.Api.Controllers;
 
 [ApiController]
-public class DeclarationsController : ControllerBase
+public class DeclarationsController : ClientControllerBase
 {
-    private readonly IHubContext<DeclarationsHub> _declarationsHubContext;
+    private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
 
-    public DeclarationsController(IHubContext<DeclarationsHub> declarationsHubContext)
+    public DeclarationsController(IMediator mediator, IMapper mapper)
     {
-        _declarationsHubContext = declarationsHubContext;
+        _mediator = mediator;
+        _mapper = mapper;
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateDeclaration(CreateDeclarationDto declaration, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateDeclaration(CreateDeclarationDto createDeclaration, CancellationToken cancellationToken)
     {
-        await _declarationsHubContext.Clients.All.SendAsync("DeclarationCreated", declaration, cancellationToken);
+        var command = _mapper.Map<CreateDeclaration.Command>(createDeclaration);
 
-        return Ok(declaration);
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateDeclaration(UpdateDeclarationDto updateDeclaration, CancellationToken cancellationToken)
+    {
+        var command = _mapper.Map<UpdateDeclaration.Command>(updateDeclaration);
+
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return Ok(result);
     }
 }

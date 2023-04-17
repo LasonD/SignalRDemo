@@ -1,14 +1,16 @@
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using SignalRDemo.Server.Api.Hubs;
 using SignalRDemo.Server.Application.Dto;
+using SignalRDemo.Server.Application.Models;
 using SignalRDemo.Server.Infrastructure.Data;
-using SignalRDemo.Server.Models;
 
 namespace SignalRDemo.Server.Application.Commands;
 
-public class CreateDeclaration
+public static class CreateDeclaration
 {
     public class Command : IRequest<DeclarationDto>
     {
@@ -42,11 +44,13 @@ public class CreateDeclaration
     {
         private readonly IMapper _mapper;
         private readonly DeclarationsDbContext _dbContext;
+        private readonly IHubContext<DeclarationsHub> _declarationsHubContext;
 
-        public Handler(IMapper mapper, DeclarationsDbContext dbContext)
+        public Handler(IMapper mapper, DeclarationsDbContext dbContext, IHubContext<DeclarationsHub> declarationsHubContext)
         {
             _mapper = mapper;
             _dbContext = dbContext;
+            _declarationsHubContext = declarationsHubContext;
         }
 
         public async Task<DeclarationDto> Handle(Command request, CancellationToken cancellationToken)
@@ -60,7 +64,9 @@ public class CreateDeclaration
 
             await _dbContext.Declarations.AddAsync(newDeclaration, cancellationToken);
 
-            return _mapper.Map<DeclarationDto>(newDeclaration);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            var dto = _mapper.Map<DeclarationDto>(newDeclaration);
         }
     }
 }
