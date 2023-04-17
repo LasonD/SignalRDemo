@@ -22,4 +22,9 @@ export class DeclarationsListComponent {
     const width = Math.floor(Math.random() * (maxWidth - minWidth + 1) + minWidth);
     return `${width}%`;
   }
+
+  calculateWidthFromNetMass(minWidth: number, maxWidth: number, netMass: number, maxNetMass: number): string {
+    const normalizedWidth = ((netMass / maxNetMass) * (maxWidth - minWidth)) + minWidth;
+    return `${normalizedWidth}%`;
+  }
 }

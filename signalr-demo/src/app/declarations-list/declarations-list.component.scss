@@ -1,9 +1,9 @@
 .declarations-container {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: center;
-  gap: 16px; // adjust this value to control the space between items
+  gap: 3px; // adjust this value to control the space between items
 }
 
 .declaration-item {

@@ -2,6 +2,6 @@
   <app-declaration *ngFor="let declaration of declarations"
                    [declaration]="declaration"
                    class="declaration-item"
-                   [ngStyle]="{'flex-basis': getRandomWidth(30, 40)}"
+                   [ngStyle]="{'flex-basis': calculateWidthFromNetMass(10, 40, declaration.netMass, 200)}"
   ></app-declaration>
 </div>
