@@ -1,26 +1,24 @@
 import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Observable, Subscription } from "rxjs";
 import { Injectable, OnDestroy } from "@angular/core";;
-import { AppState } from "../../store/app.reducer";
-import { Store } from "@ngrx/store";
-import { map } from "rxjs/operators";
-import { User } from "../user.model";
-import { environment } from "../../environments/environment";
+import { AuthService } from "./auth.service";
+import { User } from "../../models/user.model";
+import { environment } from "../../../environments/environment";
 
 @Injectable({providedIn: 'root'})
 export class AuthInterceptorService implements HttpInterceptor, OnDestroy {
   baseUrlPlaceholder = '{baseUrl}';
-  userSub: Subscription;
-  user: User;
+  //userSub: Subscription;
+  user!: User;
 
-  constructor(private store: Store<AppState>) {
-    this.userSub = this.store
-      .select('auth')
-      .pipe(map(state => state.user))
-      .subscribe(user => {
-        console.log('Got a user: ', user);
-        this.user = user;
-      })
+  constructor(private authService: AuthService) {
+    // this.userSub = this.store
+    //   .select('auth')
+    //   .pipe(map(state => state.user))
+    //   .subscribe(user => {
+    //     console.log('Got a user: ', user);
+    //     this.user = user;
+    //   })
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -28,13 +26,13 @@ export class AuthInterceptorService implements HttpInterceptor, OnDestroy {
 
     const newReq = req.clone({
       url: req.url.replace(this.baseUrlPlaceholder, environment.apiBaseUrl),
-      headers: !!token ? new HttpHeaders().set('Authorization', `Bearer ${token}`) : null,
+      headers: !!token ? req.headers.set('Authorization', `Bearer ${token}`) : null!,
     });
 
     return next.handle(newReq);
   }
 
   ngOnDestroy(): void {
-    this.userSub.unsubscribe();
+    //this.userSub.unsubscribe();
   }
 }

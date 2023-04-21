@@ -8,8 +8,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using SignalRDemo.Server.Application.Commands;
+using Microsoft.OpenApi.Models;
+using SignalRDemo.Server.Api.Middleware;
 using SignalRDemo.Server.Application.Models;
+using SignalRDemo.Server.Application.UseCases.Commands;
 using SignalRDemo.Server.Common.Helpers;
 using SignalRDemo.Server.Infrastructure.Data;
 using SignalRDemo.Server.Infrastructure.Validation;
@@ -20,7 +22,17 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddConfiguredIdentity(this IServiceCollection services, ConfigurationManager config)
     {
-        services.AddIdentityCore<User>()
+        services.AddIdentityCore<User>(options =>
+            {
+                options.Password = new PasswordOptions
+                {
+                    RequireDigit = false,
+                    RequiredLength = 4,
+                    RequireLowercase = false,
+                    RequireUppercase = false,
+                    RequireNonAlphanumeric = false,
+                };
+            })
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<DeclarationsDbContext>();
 
@@ -52,27 +64,73 @@ public static class ServiceCollectionExtensions
                 .Build();
         });
 
+        services.AddCors(options =>
+        {
+            options.AddPolicy(Constants.AllowAllCorsPolicy, builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+            );
+        });
+        services.AddEndpointsApiExplorer();
+
         return services;
     }
 
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddTransient<IAuthService, AuthService>();
+        services.AddScoped<ErrorHandler>();
 
         return services;
     }
 
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
+        services.AddControllers();
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+        services.AddSignalR();
+
         AddDbContext(services);
 
-        services.AddValidatorsFromAssemblyContaining<CreateDeclaration>();
+        services.AddValidatorsFromAssemblyContaining<CreateDeclaration.Command>();
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        services.AddMediatR(config =>
+        services.AddMediatR(config => { config.RegisterServicesFromAssembly(typeof(CreateDeclaration).Assembly); });
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+        services.AddSwaggerGen(c =>
         {
-            config.RegisterServicesFromAssembly(typeof(CreateDeclaration).Assembly);
+            c.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "JWTToken_Auth_API",
+                Version = "v1"
+            });
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description =
+                    "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+            });
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] { }
+                }
+            });
         });
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<>));
 
         return services;
     }

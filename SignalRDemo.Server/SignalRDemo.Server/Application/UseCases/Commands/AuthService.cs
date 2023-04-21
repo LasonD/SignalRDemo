@@ -7,8 +7,9 @@ using SignalRDemo.Server.Application.Dto.Auth;
 using SignalRDemo.Server.Application.Exceptions;
 using SignalRDemo.Server.Application.Models;
 using SignalRDemo.Server.Common.Helpers;
+using SignalRDemo.Server.Infrastructure.Data;
 
-namespace SignalRDemo.Server.Application.Commands;
+namespace SignalRDemo.Server.Application.UseCases.Commands;
 
 public interface IAuthService
 {
@@ -21,10 +22,12 @@ public class AuthService : IAuthService
     private const int MsInSec = 1000;
     private readonly IConfiguration _config;
     private readonly UserManager<User> _userManager;
+    private readonly DeclarationsDbContext _dbContext;
 
-    public AuthService(UserManager<User> userManager, IConfiguration config)
+    public AuthService(UserManager<User> userManager, DeclarationsDbContext dbContext, IConfiguration config)
     {
         _userManager = userManager;
+        _dbContext = dbContext;
         _config = config;
     }
 
@@ -45,6 +48,10 @@ public class AuthService : IAuthService
         {
             return null;
         }
+
+        await _dbContext.Entry(user)
+            .Collection(u => u.Jurisdictions)
+            .LoadAsync(cancellationToken);
 
         var authResult = await PrepareAuthResultAsync(user);
 
@@ -93,7 +100,9 @@ public class AuthService : IAuthService
         {
             Email = user.Email!,
             UserId = user.Id,
+            UserName = user.UserName,
             AccessToken = tokenStr,
+            Jurisdictions = user.Jurisdictions.Select(x => x.Code).ToArray(),
             ExpiresIn = durationMs,
         };
 

@@ -7,14 +7,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTabsModule } from '@angular/material/tabs';
 import { DeclarationsListComponent } from './declarations-list/declarations-list.component';
 import { DeclarationComponent } from './declarations-list/declaration/declaration.component';
-import { HttpClientModule } from "@angular/common/http";
-import { FormsModule } from "@angular/forms";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { AuthComponent } from './auth/auth.component';
+import { AuthInterceptorService } from "./auth/services/auth-interceptor.service";
 
 @NgModule({
   declarations: [
     AppComponent,
     DeclarationsListComponent,
     DeclarationComponent,
+    AuthComponent,
   ],
   imports: [
     BrowserModule,
@@ -23,8 +26,15 @@ import { FormsModule } from "@angular/forms";
     MatTabsModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

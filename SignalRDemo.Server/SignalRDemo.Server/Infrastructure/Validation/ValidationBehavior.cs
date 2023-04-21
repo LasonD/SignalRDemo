@@ -4,13 +4,14 @@ using MediatR;
 
 namespace SignalRDemo.Server.Infrastructure.Validation;
 
-public sealed class ValidationBehavior<TResponse> : IPipelineBehavior<IRequest<TResponse>, TResponse>
+public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<IRequest<TResponse>>> _validators;
 
     public ValidationBehavior(IEnumerable<IValidator<IRequest<TResponse>>> validators) => _validators = validators;
 
-    public async Task<TResponse> Handle(IRequest<TResponse> request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         if (!_validators.Any())
         {

@@ -1,12 +1,14 @@
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SignalRDemo.Server.Application.Commands;
 using SignalRDemo.Server.Application.Dto;
+using SignalRDemo.Server.Application.UseCases.Commands;
 
 namespace SignalRDemo.Server.Api.Controllers;
 
 [ApiController]
+[Route("api/[controller]")]
 public class DeclarationsController : ClientControllerBase
 {
     private readonly IMediator _mediator;
@@ -18,7 +20,7 @@ public class DeclarationsController : ClientControllerBase
         _mapper = mapper;
     }
 
-    [HttpPost]
+    [HttpPost("declarations")]
     public async Task<IActionResult> CreateDeclaration(CreateDeclarationDto createDeclaration, CancellationToken cancellationToken)
     {
         var command = _mapper.Map<CreateDeclaration.Command>(createDeclaration);
@@ -28,7 +30,7 @@ public class DeclarationsController : ClientControllerBase
         return Ok(result);
     }
 
-    [HttpPost]
+    [HttpPut("declarations")]
     public async Task<IActionResult> UpdateDeclaration(UpdateDeclarationDto updateDeclaration, CancellationToken cancellationToken)
     {
         var command = _mapper.Map<UpdateDeclaration.Command>(updateDeclaration);

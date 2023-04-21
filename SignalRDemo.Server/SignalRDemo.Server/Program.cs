@@ -10,8 +10,16 @@ builder.Services.AddInfrastructure();
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseRouting();
 app.UseMiddleware<ErrorHandler>();
 
+app.UseCors(Constants.AllowAllCorsPolicy);
 app.UseAuthentication();
 app.UseAuthorization();
 

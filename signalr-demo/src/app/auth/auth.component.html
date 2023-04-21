@@ -1,0 +1,40 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header">{{ mode === 'signin' ? 'Sign In' : 'Sign Up' }}</div>
+    <div class="card-body">
+      <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+        <div class="form-floating mb-3">
+          <input type="email" class="form-control" id="email" formControlName="email" placeholder="Email" required>
+          <label for="email">Email</label>
+          <div class="invalid-feedback">Please enter a valid email address.</div>
+        </div>
+        <ng-container *ngIf="mode === 'signup'">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="username" formControlName="username" placeholder="Username" required>
+            <label for="username">Username</label>
+            <div class="invalid-feedback">Please enter a username.</div>
+          </div>
+          <div class="form-floating mb-3">
+            <select class="form-control custom-select-multiple" id="jurisdictions" formControlName="jurisdictions" multiple>
+              <option *ngFor="let jurisdiction of (jurisdictions$ | async)" [value]="jurisdiction.code">
+                {{ jurisdiction.code }}
+              </option>
+            </select>
+            <label for="jurisdictions">Jurisdictions</label>
+          </div>
+        </ng-container>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" id="password" formControlName="password" placeholder="Password" required>
+          <label for="password">Password</label>
+          <div class="invalid-feedback">Please enter a valid password.</div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="!registrationForm.valid">{{ mode === 'signin' ? 'Sign In' : 'Sign Up' }}</button>
+      </form>
+      <div class="text-center mt-3">
+        <span *ngIf="mode === 'signin'">Don't have an account? </span>
+        <span *ngIf="mode === 'signup'">Already have an account? </span>
+        <a class="link-primary" (click)="toggleMode()">{{ mode === 'signin' ? 'Sign Up' : 'Sign In' }}</a>
+      </div>
+    </div>
+  </div>
+</div>
