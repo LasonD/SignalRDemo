@@ -147,7 +147,7 @@ public class AuthService : IAuthService
 
         var tokenClaims = new List<Claim>()
             {
-                new(JwtRegisteredClaimNames.Sub, user.Id),
+                UserIdClaimHelper.CreateClaim(user.Id),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             }
             .Union(claims)

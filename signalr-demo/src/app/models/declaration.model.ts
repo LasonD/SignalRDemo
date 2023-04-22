@@ -4,6 +4,7 @@ export interface Declaration {
   jurisdiction: string;
   displayColor: string;
   netMass: number;
+  creationDate: Date;
   declarantEmail: string;
   declarantId: string;
 }

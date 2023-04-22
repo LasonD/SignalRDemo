@@ -8,5 +8,6 @@ public class DeclarationDto
     public string DisplayColor { get; set; } = null!;
     public decimal NetMass { get; set; }
     public string DeclarantEmail { get; set; } = null!;
+    public DateTime CreationDate { get; set; }
     public string DeclarantId { get; set; } = null!;
 }

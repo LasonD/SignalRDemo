@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, of, Subject } from "rxjs";
+import { BehaviorSubject, catchError, of, Subject } from "rxjs";
 import { AuthResult, LoginRequest, RegisterRequest, User } from "../../models/user.model";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
@@ -10,7 +10,7 @@ import { map } from "rxjs/operators";
 })
 export class AuthService {
   private userKey = 'userData';
-  public user$: Subject<User> = new Subject<User>();
+  public user$: Subject<User | null> = new BehaviorSubject<User | null>(null);
   public errors$: Subject<any> = new Subject<any>();
 
   constructor(private http: HttpClient) {
@@ -34,6 +34,8 @@ export class AuthService {
 
   public autoLogin() {
     const authResult: AuthResult = JSON.parse(localStorage.getItem(this.userKey)!);
+
+    console.log('Auto login auth result: ', authResult);
 
     if (!authResult) {
       this.user$.next(null!);
@@ -62,7 +64,7 @@ export class AuthService {
       authResponse.accessToken,
       authResponse.expiresIn);
 
-    localStorage.setItem(this.userKey, JSON.stringify(user));
+    localStorage.setItem(this.userKey, JSON.stringify(authResponse));
 
     this.user$.next(user);
   }

@@ -1,9 +1,9 @@
 using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SignalRDemo.Server.Application.Dto;
 using SignalRDemo.Server.Application.UseCases.Commands;
+using SignalRDemo.Server.Application.UseCases.Queries;
 
 namespace SignalRDemo.Server.Api.Controllers;
 
@@ -20,7 +20,17 @@ public class DeclarationsController : ClientControllerBase
         _mapper = mapper;
     }
 
-    [HttpPost("declarations")]
+    [HttpGet("")]
+    public async Task<IActionResult> GetDeclarations(CancellationToken cancellationToken)
+    {
+        var query = new GetDeclarations.Query { UserId = GetRequiredAppUserId() };
+
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpPost("")]
     public async Task<IActionResult> CreateDeclaration(CreateDeclarationDto createDeclaration, CancellationToken cancellationToken)
     {
         var command = _mapper.Map<CreateDeclaration.Command>(createDeclaration);
@@ -30,7 +40,7 @@ public class DeclarationsController : ClientControllerBase
         return Ok(result);
     }
 
-    [HttpPut("declarations")]
+    [HttpPut("")]
     public async Task<IActionResult> UpdateDeclaration(UpdateDeclarationDto updateDeclaration, CancellationToken cancellationToken)
     {
         var command = _mapper.Map<UpdateDeclaration.Command>(updateDeclaration);
