@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from "./services/auth.service";
-import { filter, take } from "rxjs/operators";
+import { filter, skip, take } from "rxjs/operators";
 import { JurisdictionsService } from "../services/jurisdictions.service";
 import { Observable } from "rxjs";
 import { Jurisdiction } from "../models/jurisdiction.model";
@@ -16,7 +16,7 @@ export class AuthComponent implements OnInit {
   mode: 'signin' | 'signup' = 'signin';
   registrationForm!: FormGroup;
 
-  jurisdictions$!: Observable<Jurisdiction[]>;
+  jurisdictions$!: Observable<Jurisdiction[] | null>;
 
   constructor(private fb: FormBuilder,
               private authService: AuthService,
@@ -26,13 +26,18 @@ export class AuthComponent implements OnInit {
 
   ngOnInit(): void {
     this.jurisdictions$ = this.jurisdictionsService.jurisdictions$
-      .pipe(filter(x => !!x));
+      .pipe(filter(x => {
+        return !!x;
+      }));
 
     this.jurisdictionsService.getJurisdictions()
       .subscribe();
 
     this.authService.user$
-      .pipe(filter(x => !!x?.token))
+      .pipe(
+        skip(1),
+        filter(x => !!x?.token)
+      )
       .subscribe(u => {
         console.log()
         this.router.navigate(['/declarations']);

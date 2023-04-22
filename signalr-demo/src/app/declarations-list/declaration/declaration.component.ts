@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output } from '@angular/core';
 import { Declaration } from "../../models/declaration.model";
+import { Subject } from "rxjs";
 
 @Component({
   selector: 'app-declaration',
@@ -8,20 +9,32 @@ import { Declaration } from "../../models/declaration.model";
 })
 export class DeclarationComponent {
   @Input() declaration!: Declaration;
-  @Input() jurisdictions: string[] = ['GB', 'BE', 'NL'];
+  @Input() jurisdictions!: string[];
+
+  @Output() delete: Subject<Declaration> = new Subject<Declaration>();
+  @Output() save: Subject<Declaration> = new Subject<Declaration>();
+  @Output() toggleEdit: Subject<Declaration> = new Subject<Declaration>();
+  @Output() cancelEdit: Subject<Declaration> = new Subject<Declaration>();
+
   editMode: boolean = false;
 
   toggleEditMode(): void {
     this.editMode = !this.editMode;
+    this.toggleEdit.next(this.declaration);
   }
 
-  cancelEdit(): void {
+  onCancelEdit(): void {
     this.editMode = false;
+    this.cancelEdit.next(this.declaration);
   }
 
   saveChanges(): void {
-    // Implement your save functionality here
     this.toggleEditMode();
+    this.save.next(this.declaration);
+  }
+
+  onDelete(): void {
+    this.delete.next(this.declaration);
   }
 
   getBackgroundColor(): string {

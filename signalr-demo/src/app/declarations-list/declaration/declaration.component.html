@@ -30,7 +30,8 @@
     <div class="d-flex justify-content-between mt-3">
       <button class="btn btn-primary stylish-btn" (click)="toggleEditMode()" *ngIf="!editMode">Edit</button>
       <button class="btn btn-success stylish-btn" (click)="saveChanges()" *ngIf="editMode">Save</button>
-      <button class="btn btn-secondary stylish-btn" (click)="cancelEdit()" *ngIf="editMode">Cancel</button>
+      <button class="btn btn-secondary stylish-btn" (click)="onCancelEdit()" *ngIf="editMode">Cancel</button>
+      <button class="btn btn-danger stylish-btn" (click)="onDelete()">Delete</button>
     </div>
   </div>
 </div>

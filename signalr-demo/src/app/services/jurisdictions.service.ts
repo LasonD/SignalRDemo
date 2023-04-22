@@ -8,7 +8,7 @@ import { Jurisdiction } from "../models/jurisdiction.model";
   providedIn: 'root'
 })
 export class JurisdictionsService {
-  jurisdictions$: Subject<Jurisdiction[]> = new BehaviorSubject(null! as Jurisdiction[]);
+  jurisdictions$: Subject<Jurisdiction[] | null> = new BehaviorSubject<Jurisdiction[] | null>(null);
 
   constructor(private http: HttpClient) {
   }

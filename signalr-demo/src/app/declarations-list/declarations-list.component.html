@@ -1,6 +1,7 @@
-<div class="declarations-container">
+<div class="declarations-container" *ngIf="jurisdictionCodes$ | async as jurisdictionCodes">
   <app-declaration *ngFor="let declaration of declarations"
                    [declaration]="declaration"
+                   [jurisdictions]="jurisdictionCodes"
                    class="declaration-item"
                    [ngStyle]="{'flex-basis': calculateWidthFromNetMass(10, 40, declaration.netMass, 200)}"
   ></app-declaration>

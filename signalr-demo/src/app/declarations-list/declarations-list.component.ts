@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { Declaration } from "../models/declaration.model";
 import { DeclarationsService } from "../services/declarations.service";
+import { JurisdictionsService } from "../services/jurisdictions.service";
+import { Jurisdiction } from "../models/jurisdiction.model";
+import { Observable } from "rxjs";
+import { filter, map } from "rxjs/operators";
 
 @Component({
   selector: 'app-declarations-list',
@@ -10,12 +14,21 @@ import { DeclarationsService } from "../services/declarations.service";
 export class DeclarationsListComponent {
   declarations: Declaration[] = [];
 
-  constructor(private declarationsService: DeclarationsService) {}
+  jurisdictionCodes$!: Observable<string[]>;
+
+  constructor(private declarationsService: DeclarationsService,
+              private jurisdictionService: JurisdictionsService) {}
 
   ngOnInit(): void {
     this.declarationsService
       .getDeclarations()
       .subscribe((declarations) => (this.declarations = declarations));
+
+    this.jurisdictionCodes$ = this.jurisdictionService.jurisdictions$
+      .pipe(
+        filter(x => !!x),
+        map(x => x!.map(j => j.code))
+      );
   }
 
   getRandomWidth(minWidth: number, maxWidth: number): string {
