@@ -5,6 +5,7 @@ import { filter, take } from "rxjs/operators";
 import { JurisdictionsService } from "../services/jurisdictions.service";
 import { Observable } from "rxjs";
 import { Jurisdiction } from "../models/jurisdiction.model";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-auth',
@@ -19,7 +20,8 @@ export class AuthComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private authService: AuthService,
-              private jurisdictionsService: JurisdictionsService) {
+              private jurisdictionsService: JurisdictionsService,
+              private router: Router) {
   }
 
   ngOnInit(): void {
@@ -28,6 +30,10 @@ export class AuthComponent implements OnInit {
 
     this.jurisdictionsService.getJurisdictions()
       .subscribe();
+
+    this.authService.user$
+      .pipe(filter(x => !!x?.token))
+      .subscribe(u => this.router.navigate(['/declarations']))
 
     this.buildForm();
   }
@@ -54,8 +60,6 @@ export class AuthComponent implements OnInit {
   }
 
   onSubmit(): void {
-    console.log(this.registrationForm.value);
-
     if (this.mode === 'signin') {
       this.authService.login(this.registrationForm.value)
         .pipe(take(1))

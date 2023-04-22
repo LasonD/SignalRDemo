@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SignalRDemo.Server.Application.Dto.Auth;
 using SignalRDemo.Server.Application.Exceptions;
@@ -68,9 +69,13 @@ public class AuthService : IAuthService
             UserName = registrationData.UserName,
         };
 
-        var userJurisdictions = registrationData.Jurisdictions.Select(j => new Jurisdiction(j)).ToList();
+        var userJurisdictions = registrationData.Jurisdictions;
 
-        newUser.Jurisdictions.AddRange(userJurisdictions);
+        var jurisdictions = await _dbContext.Jurisdictions
+            .Where(j => userJurisdictions.Any(x => x == j.Code))
+            .ToListAsync(cancellationToken);
+
+        newUser.Jurisdictions.AddRange(jurisdictions);
 
         var identityResult = await _userManager.CreateAsync(newUser, registrationData.Password);
 

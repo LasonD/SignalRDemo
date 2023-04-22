@@ -10,13 +10,14 @@ import { map } from "rxjs/operators";
 })
 export class AuthService {
   private userKey = 'userData';
-  public user: Subject<User> = new Subject<User>();
+  public user$: Subject<User> = new Subject<User>();
+  public errors$: Subject<any> = new Subject<any>();
 
   constructor(private http: HttpClient) {
   }
 
   public login(loginData: LoginRequest) {
-    return this.http.post<AuthResult>(`${environment.apiBaseUrl}/api/auth/login`, loginData)
+    return this.http.post<AuthResult>(`${environment.apiBaseUrl}/api/Auth/login`, loginData)
       .pipe(
         map(this.handleAuthResponse.bind(this)),
         catchError(this.handleError.bind(this))
@@ -35,7 +36,7 @@ export class AuthService {
     const authResult: AuthResult = JSON.parse(localStorage.getItem(this.userKey)!);
 
     if (!authResult) {
-      this.user.next(null!);
+      this.user$.next(null!);
       return;
     }
 
@@ -50,7 +51,7 @@ export class AuthService {
       localStorage.removeItem(this.userKey);
     }
 
-    this.user.next(user);
+    this.user$.next(user);
   }
 
   private handleAuthResponse(authResponse: AuthResult) {
@@ -63,11 +64,11 @@ export class AuthService {
 
     localStorage.setItem(this.userKey, JSON.stringify(user));
 
-    this.user.next(user);
+    this.user$.next(user);
   }
 
   private handleError(err: HttpErrorResponse) {
-    prompt('Something went wrong...' + JSON.stringify(err));
+    this.errors$.next(err);
     return of(null);
   }
 }

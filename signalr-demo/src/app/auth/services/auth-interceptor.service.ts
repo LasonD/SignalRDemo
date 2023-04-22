@@ -1,4 +1,4 @@
-import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Observable, Subscription } from "rxjs";
 import { Injectable, OnDestroy } from "@angular/core";;
 import { AuthService } from "./auth.service";
@@ -8,17 +8,15 @@ import { environment } from "../../../environments/environment";
 @Injectable({providedIn: 'root'})
 export class AuthInterceptorService implements HttpInterceptor, OnDestroy {
   baseUrlPlaceholder = '{baseUrl}';
-  //userSub: Subscription;
+  userSub: Subscription;
   user!: User;
 
   constructor(private authService: AuthService) {
-    // this.userSub = this.store
-    //   .select('auth')
-    //   .pipe(map(state => state.user))
-    //   .subscribe(user => {
-    //     console.log('Got a user: ', user);
-    //     this.user = user;
-    //   })
+    this.userSub = this.authService.user$
+      .subscribe(user => {
+        console.log('Got a user: ', user);
+        this.user = user;
+      });
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -33,6 +31,6 @@ export class AuthInterceptorService implements HttpInterceptor, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    //this.userSub.unsubscribe();
+    this.userSub.unsubscribe();
   }
 }
