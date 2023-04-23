@@ -10,7 +10,7 @@ import { map } from "rxjs/operators";
 })
 export class AuthService {
   private userKey = 'userData';
-  public user$: Subject<User | null> = new BehaviorSubject<User | null>(null);
+  public user$: Subject<{ user: User, shouldRedirect: boolean } | null> = new BehaviorSubject<{ user: User, shouldRedirect: boolean } | null>(null);
   public errors$: Subject<any> = new Subject<any>();
 
   constructor(private http: HttpClient) {
@@ -35,8 +35,6 @@ export class AuthService {
   public autoLogin() {
     const authResult: AuthResult = JSON.parse(localStorage.getItem(this.userKey)!);
 
-    console.log('Auto login auth result: ', authResult);
-
     if (!authResult) {
       this.user$.next(null!);
       return;
@@ -53,7 +51,7 @@ export class AuthService {
       localStorage.removeItem(this.userKey);
     }
 
-    this.user$.next(user);
+    this.user$.next({ user, shouldRedirect: false });
   }
 
   private handleAuthResponse(authResponse: AuthResult) {
@@ -66,7 +64,12 @@ export class AuthService {
 
     localStorage.setItem(this.userKey, JSON.stringify(authResponse));
 
-    this.user$.next(user);
+    this.user$.next({ user, shouldRedirect: true });
+  }
+
+  public logOut() {
+    localStorage.removeItem(this.userKey);
+    this.user$.next(null);
   }
 
   private handleError(err: HttpErrorResponse) {

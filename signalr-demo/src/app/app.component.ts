@@ -16,12 +16,4 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.authService.autoLogin();
   }
-
-  public onDeclarationsSelected() {
-    this.router.navigate(['declarations']);
-  }
-
-  public onStatisticsSelected() {
-    this.router.navigate(['statistics']);
-  }
 }

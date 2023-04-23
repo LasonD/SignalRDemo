@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subject } from "rxjs";
+import { Declaration } from "../../models/declaration.model";
 
 @Component({
   selector: 'app-create-declaration',
@@ -9,6 +11,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class CreateDeclarationComponent implements OnInit {
   jurisdictions: string[] = ['Jurisdiction A', 'Jurisdiction B', 'Jurisdiction C'];
   declarationForm: FormGroup;
+
+  @Output() submitted: Subject<Declaration> = new Subject<Declaration>();
 
   constructor(private fb: FormBuilder) {
     this.declarationForm = this.fb.group({
@@ -22,9 +26,12 @@ export class CreateDeclarationComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.declarationForm.valid) {
-      console.log('Form submitted:', this.declarationForm.value);
-      this.declarationForm.reset({ jurisdiction: this.jurisdictions[0] });
+    if (!this.declarationForm.valid) {
+      return;
     }
+
+    this.declarationForm.reset({ jurisdiction: this.jurisdictions[0] });
+
+    this.submitted.subscribe(this.declarationForm.value);
   }
 }

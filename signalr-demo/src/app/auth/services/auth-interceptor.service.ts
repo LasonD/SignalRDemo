@@ -13,9 +13,8 @@ export class AuthInterceptorService implements HttpInterceptor, OnDestroy {
 
   constructor(private authService: AuthService) {
     this.userSub = this.authService.user$
-      .subscribe(user => {
-        console.log('Got a user: ', user);
-        this.user = user!;
+      .subscribe(result => {
+        this.user = result?.user!;
       });
   }
 
@@ -26,8 +25,6 @@ export class AuthInterceptorService implements HttpInterceptor, OnDestroy {
       url: req.url.replace(this.baseUrlPlaceholder, environment.apiBaseUrl),
       headers: !!token ? req.headers.set('Authorization', `Bearer ${token}`) : null!,
     });
-
-    console.log('Request: ', newReq);
 
     return next.handle(newReq);
   }

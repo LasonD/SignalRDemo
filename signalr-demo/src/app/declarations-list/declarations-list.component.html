@@ -1,4 +1,3 @@
-<app-create-declaration></app-create-declaration>
 <div class="declarations-container" *ngIf="jurisdictionCodes$ | async as jurisdictionCodes">
   <app-declaration *ngFor="let declaration of declarations"
                    [declaration]="declaration"

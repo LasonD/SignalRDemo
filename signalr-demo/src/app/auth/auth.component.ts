@@ -36,11 +36,10 @@ export class AuthComponent implements OnInit {
     this.authService.user$
       .pipe(
         skip(1),
-        filter(x => !!x?.token)
+        filter(result => !!result?.user?.token && result.shouldRedirect)
       )
       .subscribe(u => {
-        console.log()
-        this.router.navigate(['/declarations']);
+        this.router.navigate(['/']);
       });
 
     this.buildForm();
