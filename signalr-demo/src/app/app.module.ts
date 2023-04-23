@@ -11,6 +11,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { AuthComponent } from './auth/auth.component';
 import { AuthInterceptorService } from "./auth/services/auth-interceptor.service";
+import { CreateDeclarationComponent } from './declarations-list/create-declaration/create-declaration.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { AuthInterceptorService } from "./auth/services/auth-interceptor.service
     DeclarationsListComponent,
     DeclarationComponent,
     AuthComponent,
+    CreateDeclarationComponent,
   ],
   imports: [
     BrowserModule,

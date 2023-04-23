@@ -10,7 +10,7 @@ using SignalRDemo.Server.Application.Models;
 using SignalRDemo.Server.Common.Helpers;
 using SignalRDemo.Server.Infrastructure.Data;
 
-namespace SignalRDemo.Server.Application.UseCases.Commands;
+namespace SignalRDemo.Server.Application.Services;
 
 public interface IAuthService
 {
@@ -144,14 +144,17 @@ public class AuthService : IAuthService
     {
         var roles = await _userManager.GetRolesAsync(user);
         var claims = await _userManager.GetClaimsAsync(user);
+        var jurisdictionCodes = user.Jurisdictions.Select(j => j.Code).ToList();
+        var jurisdictionClaims = jurisdictionCodes.ToJurisdictionClaims();
 
         var tokenClaims = new List<Claim>()
             {
-                UserIdClaimHelper.CreateClaim(user.Id),
+                user.Id.ToUserIdClaim(),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             }
             .Union(claims)
             .Union(roles.Select(r => new Claim(ClaimTypes.Role, r)))
+            .Union(jurisdictionClaims)
             .ToList();
 
         if (user.Email != null)

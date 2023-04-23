@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SignalRDemo.Server.Api.Middleware;
 using SignalRDemo.Server.Application.Models;
+using SignalRDemo.Server.Application.Services;
 using SignalRDemo.Server.Application.UseCases.Commands;
 using SignalRDemo.Server.Common.Helpers;
 using SignalRDemo.Server.Infrastructure.Data;
@@ -80,7 +81,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddTransient<IAuthService, AuthService>();
-        services.AddScoped<ErrorHandler>();
+        services.AddTransient<INotificationsService, NotificationsService>();
 
         return services;
     }
@@ -88,6 +89,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddControllers();
+
+        services.AddScoped<ErrorHandler>();
+
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
         services.AddSignalR();

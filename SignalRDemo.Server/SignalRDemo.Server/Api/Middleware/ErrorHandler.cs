@@ -32,6 +32,11 @@ internal class ErrorHandler : IMiddleware
         {
             await WriteErrorResponse(context, HttpStatusCode.Unauthorized, new List<string> { authException.Message });
         }
+
+        if (exception is BusinessException businessException)
+        {
+            await WriteErrorResponse(context, HttpStatusCode.BadRequest, new List<string> { businessException.Message });
+        }
     }
 
     private static async Task HandleValidationExceptionAsync(HttpContext context, ValidationException validationException)

@@ -1,11 +1,10 @@
 using AutoMapper;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using SignalRDemo.Server.Api.Hubs;
 using SignalRDemo.Server.Application.Dto;
 using SignalRDemo.Server.Application.Models;
+using SignalRDemo.Server.Application.Services;
 using SignalRDemo.Server.Infrastructure.Data;
 
 namespace SignalRDemo.Server.Application.UseCases.Commands;
@@ -49,13 +48,13 @@ public static class CreateDeclaration
     {
         private readonly IMapper _mapper;
         private readonly DeclarationsDbContext _dbContext;
-        private readonly IHubContext<DeclarationsHub, IDeclarationsHub> _declarationsHubContext;
+        private readonly INotificationsService _notificationsService;
 
-        public Handler(IMapper mapper, DeclarationsDbContext dbContext, IHubContext<DeclarationsHub, IDeclarationsHub> declarationsHubContext)
+        public Handler(IMapper mapper, DeclarationsDbContext dbContext, INotificationsService notificationsService)
         {
             _mapper = mapper;
             _dbContext = dbContext;
-            _declarationsHubContext = declarationsHubContext;
+            _notificationsService = notificationsService;
         }
 
         public async Task<DeclarationDto> Handle(Command request, CancellationToken cancellationToken)
@@ -74,7 +73,7 @@ public static class CreateDeclaration
 
             var dto = _mapper.Map<DeclarationDto>(newDeclaration);
 
-            await _declarationsHubContext.Clients.Group($"Jurisdiction_{request.Jurisdiction}").DeclarationCreated(dto);
+            await _notificationsService.NotifyDeclarationCreatedAsync(dto, cancellationToken);
 
             return dto;
         }

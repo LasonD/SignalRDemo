@@ -49,4 +49,19 @@ public class DeclarationsController : ClientControllerBase
 
         return Ok(result);
     }
+
+    [HttpPut("")]
+    public async Task<IActionResult> DeleteDeclaration(string id, CancellationToken cancellationToken)
+    {
+        var command = new DeleteDeclaration.Command
+        {
+            Id = id, 
+            UserId = GetRequiredAppUserId(), 
+            UserJurisdictions = GetCurrentUserJurisdictions()
+        };
+
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return Ok(result);
+    }
 }

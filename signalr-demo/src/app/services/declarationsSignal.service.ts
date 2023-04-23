@@ -14,7 +14,10 @@ export class DeclarationsSignalService {
   declarationEditCancelled$ = new Subject<string>();
   declarationUpdated$ = new Subject<Declaration>();
   declarationDeleted$ = new Subject<string>();
-  declarationAdded$ = new Subject<Declaration>();
+  declarationCreated$ = new Subject<Declaration>();
+
+  userConnected$ = new Subject<string>();
+  userDisconnected$ = new Subject<string>();
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -37,12 +40,30 @@ export class DeclarationsSignalService {
       this.declarationDeleted$.next(declarationId);
     });
 
-    this.hubConnection.on('declarationAdded', (declaration: Declaration) => {
-      this.declarationAdded$.next(declaration);
+    this.hubConnection.on('declarationCreated', (declaration: Declaration) => {
+      this.declarationCreated$.next(declaration);
     });
 
     this.hubConnection.on('declarationUpdated', (declaration: Declaration) => {
       this.declarationUpdated$.next(declaration);
     });
+
+    this.hubConnection.on('userConnected', (email: string) => {
+      this.userConnected$.next(email);
+    });
+
+    this.hubConnection.on('userDisconnected', (email: string) => {
+      this.userDisconnected$.next(email);
+    });
+  }
+
+  declarationEditToggled(id: string) {
+    this.hubConnection.invoke('declarationEditToggled', id)
+      .catch(); //  todo: add error handling
+  }
+
+  declarationEditCancelled(id: string) {
+    this.hubConnection.invoke('declarationEditCancelled', id)
+      .catch(); //  todo: add error handling
   }
 }

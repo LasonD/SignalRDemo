@@ -1,7 +1,6 @@
 using AutoMapper;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using SignalRDemo.Server.Application.Dto;
 using SignalRDemo.Server.Application.Exceptions;
 using SignalRDemo.Server.Application.Models;
@@ -10,33 +9,29 @@ using SignalRDemo.Server.Infrastructure.Data;
 
 namespace SignalRDemo.Server.Application.UseCases.Commands;
 
-public static class UpdateDeclaration
+public static class DeleteDeclaration
 {
     public class Command : IRequest<DeclarationDto>
     {
         public string Id { get; set; } = null!;
-        public string Description { get; set; } = null!;
-        public string Jurisdiction { get; set; } = null!;
+
+        public string UserId { get; set; } = null!;
+
+        public string[] UserJurisdictions { get; set; } = null!;
     }
 
     public class Validator : AbstractValidator<Command>
     {
-        public Validator(DeclarationsDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        public Validator()
         {
-            var user = httpContextAccessor.HttpContext?.User;
-
-            RuleFor(x => x.Description)
+            RuleFor(x => x.Id)
                 .NotEmpty()
-                .WithMessage("Declaration description cannot be empty.");
+                .WithMessage("Declaration Id cannot be empty.");
 
-            RuleFor(x => x.Jurisdiction)
+            RuleFor(x => x.UserJurisdictions)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
-                .WithName("Declaration should have non-empty jurisdiction.")
-                .Must(x => user?.HasClaim(c => c.Type == Constants.JurisdictionClaimType && c.Value == x) ?? false)
-                .WithMessage(x => $"Cannot update jurisdiction. You are not authorized to create declarations for {x} jurisdiction.")
-                .MustAsync((x, ct) => dbContext.Jurisdictions.AnyAsync(j => j.Code == x, ct))
-                .WithMessage(x => $"{x.Jurisdiction} is not a known jurisdiction.");
+                .WithName("User should have have access to at least one jurisdiction to delete declarations.");
         }
     }
 
@@ -62,13 +57,18 @@ public static class UpdateDeclaration
                 throw new NotFoundException(request.Id, nameof(Declaration));
             }
 
-            _mapper.Map(request, declaration);
+            if (!request.UserJurisdictions.Contains(declaration.JurisdictionCode))
+            {
+                throw new BusinessException($"The user {request.UserId} is not eligible to delete declarations for {declaration.JurisdictionCode} jurisdiction");
+            }
+
+            var removedDeclaration = _dbContext.Declarations.Remove(declaration);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var dto = _mapper.Map<DeclarationDto>(declaration);
+            var dto = _mapper.Map<DeclarationDto>(removedDeclaration);
 
-            await _notificationsService.NotifyDeclarationUpdatedAsync(dto, cancellationToken);
+            await _notificationsService.NotifyDeclarationDeletedAsync(dto.Id, dto.Jurisdiction, cancellationToken);
 
             return dto;
         }

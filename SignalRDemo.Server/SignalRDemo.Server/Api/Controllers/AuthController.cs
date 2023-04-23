@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SignalRDemo.Server.Application.Dto.Auth;
-using SignalRDemo.Server.Application.UseCases.Commands;
+using SignalRDemo.Server.Application.Services;
 
 namespace SignalRDemo.Server.Api.Controllers;
 

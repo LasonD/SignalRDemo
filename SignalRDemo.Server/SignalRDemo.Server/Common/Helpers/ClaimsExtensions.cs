@@ -27,4 +27,19 @@ public static class ClaimsExtensions
 
         return jurisdictionClaims;
     }
+
+    public static IEnumerable<Claim> ToJurisdictionClaims(this IEnumerable<string> jurisdictions)
+    {
+        return jurisdictions.Select(j => new Claim(Constants.JurisdictionClaimType, j)).ToList();
+    }
+
+    public static Claim ToUserIdClaim(this string userId)
+    {
+        return new Claim(Constants.AppUserIdClaimType, userId);
+    }
+
+    public static string? GetUserId(this ClaimsPrincipal claimsPrincipal)
+    {
+        return claimsPrincipal.FindFirst(Constants.AppUserIdClaimType)?.Value;
+    }
 }

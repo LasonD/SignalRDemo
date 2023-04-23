@@ -8,7 +8,7 @@ public abstract class ClientControllerBase : ControllerBase
 {
     protected string GetRequiredAppUserId()
     {
-        var userId = UserIdClaimHelper.RetrieveUserId(User);
+        var userId = User.GetUserId();
 
         if (userId == null)
         {
@@ -16,5 +16,12 @@ public abstract class ClientControllerBase : ControllerBase
         }
 
         return userId;
+    }
+
+    protected string[] GetCurrentUserJurisdictions()
+    {
+        var jurisdictions = User.GetUserJurisdictionsFromClaims();
+
+        return jurisdictions.ToArray();
     }
 }

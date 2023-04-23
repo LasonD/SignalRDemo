@@ -43,14 +43,20 @@ export class DeclarationsListComponent {
   }
 
   onDeclarationSave(declaration: Declaration) {
-    // this.declarationSignalService.declarationUpdated$.next(declaration)
+    this.declarationsService.updateDeclaration(declaration.id, declaration)
+      .subscribe();
+  }
+
+  onDeclarationDelete(declaration: Declaration) {
+    this.declarationsService.deleteDeclaration(declaration.id)
+      .subscribe();
   }
 
   onToggleEdit(declaration: Declaration) {
-
+    this.declarationSignalService.declarationEditToggled(declaration.id);
   }
 
   onCancelEdit(declaration: Declaration) {
-
+    this.declarationSignalService.declarationEditCancelled(declaration.id);
   }
 }
