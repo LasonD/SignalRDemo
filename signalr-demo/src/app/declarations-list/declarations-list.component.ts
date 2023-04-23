@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { Declaration } from "../models/declaration.model";
 import { DeclarationsService } from "../services/declarations.service";
 import { JurisdictionsService } from "../services/jurisdictions.service";
-import { Jurisdiction } from "../models/jurisdiction.model";
 import { Observable } from "rxjs";
 import { filter, map } from "rxjs/operators";
+import { DeclarationsSignalService } from "../services/declarationsSignal.service";
 
 @Component({
   selector: 'app-declarations-list',
@@ -17,7 +17,8 @@ export class DeclarationsListComponent {
   jurisdictionCodes$!: Observable<string[]>;
 
   constructor(private declarationsService: DeclarationsService,
-              private jurisdictionService: JurisdictionsService) {}
+              private jurisdictionService: JurisdictionsService,
+              private declarationSignalService: DeclarationsSignalService) {}
 
   ngOnInit(): void {
     this.declarationsService
@@ -39,5 +40,17 @@ export class DeclarationsListComponent {
   calculateWidthFromNetMass(minWidth: number, maxWidth: number, netMass: number, maxNetMass: number): string {
     const normalizedWidth = ((netMass / maxNetMass) * (maxWidth - minWidth)) + minWidth;
     return `${normalizedWidth}%`;
+  }
+
+  onDeclarationSave(declaration: Declaration) {
+    // this.declarationSignalService.declarationUpdated$.next(declaration)
+  }
+
+  onToggleEdit(declaration: Declaration) {
+
+  }
+
+  onCancelEdit(declaration: Declaration) {
+
   }
 }
