@@ -16,6 +16,7 @@ export class DeclarationsListComponent implements OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
 
   declarations: Declaration[] = [];
+  lockedDeclarations: string[] = [];
 
   jurisdictionCodes$!: Observable<string[]>;
 
@@ -48,6 +49,10 @@ export class DeclarationsListComponent implements OnDestroy {
         this.notificationsService.showError(err);
       });
 
+    this.subscribeToRealTimeEvents();
+  }
+
+  subscribeToRealTimeEvents() {
     this.declarationSignalService.declarationUpdated$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((updatedDeclaration: Declaration) => {
@@ -58,6 +63,18 @@ export class DeclarationsListComponent implements OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((deletedDeclarationId: string) => {
         this.declarations = this.declarations.filter(d => d.id !== deletedDeclarationId);
+      });
+
+    this.declarationSignalService.declarationEditToggled$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((declarationId: string) => {
+        this.lockedDeclarations = [...this.lockedDeclarations, declarationId];
+      });
+
+    this.declarationSignalService.declarationEditCancelled$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((declarationId: string) => {
+        this.lockedDeclarations = this.lockedDeclarations.filter(id => id !== declarationId);
       });
   }
 
@@ -91,5 +108,9 @@ export class DeclarationsListComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyed$.next(true);
+  }
+
+  isLocked(declarationId: string) {
+    return this.lockedDeclarations.some(id => id === declarationId);
   }
 }
