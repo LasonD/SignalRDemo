@@ -10,13 +10,13 @@ import { Subject } from "rxjs";
 export class DeclarationComponent {
   @Input() declaration!: Declaration;
   @Input() jurisdictions!: string[];
+  @Input() isLocked: boolean = false;
+  @Input() editMode: boolean = false;
 
   @Output() delete: Subject<Declaration> = new Subject<Declaration>();
   @Output() save: Subject<Declaration> = new Subject<Declaration>();
   @Output() toggleEdit: Subject<Declaration> = new Subject<Declaration>();
   @Output() cancelEdit: Subject<Declaration> = new Subject<Declaration>();
-
-  editMode: boolean = false;
 
   toggleEditMode(): void {
     this.editMode = !this.editMode;

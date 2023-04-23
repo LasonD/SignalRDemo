@@ -1,24 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Declaration } from "../models/declaration.model";
 import { DeclarationsService } from "../services/declarations.service";
 import { JurisdictionsService } from "../services/jurisdictions.service";
-import { Observable } from "rxjs";
+import { Observable, Subject, takeUntil } from "rxjs";
 import { filter, map } from "rxjs/operators";
 import { DeclarationsSignalService } from "../services/declarationsSignal.service";
+import { NotificationService } from "../services/notifications.service";
 
 @Component({
   selector: 'app-declarations-list',
   templateUrl: './declarations-list.component.html',
   styleUrls: ['./declarations-list.component.scss']
 })
-export class DeclarationsListComponent {
+export class DeclarationsListComponent implements OnDestroy {
+  destroyed$: Subject<boolean> = new Subject<boolean>();
+
   declarations: Declaration[] = [];
 
   jurisdictionCodes$!: Observable<string[]>;
 
   constructor(private declarationsService: DeclarationsService,
               private jurisdictionService: JurisdictionsService,
-              private declarationSignalService: DeclarationsSignalService) {}
+              private declarationSignalService: DeclarationsSignalService,
+              private notificationsService: NotificationService) {}
 
   ngOnInit(): void {
     this.declarationsService
@@ -27,9 +31,34 @@ export class DeclarationsListComponent {
 
     this.jurisdictionCodes$ = this.jurisdictionService.jurisdictions$
       .pipe(
+        takeUntil(this.destroyed$),
         filter(x => !!x),
         map(x => x!.map(j => j.code))
       );
+
+    this.declarationsService.error$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((err) => {
+        this.notificationsService.showError(err);
+      });
+
+    this.jurisdictionService.error$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((err) => {
+        this.notificationsService.showError(err);
+      });
+
+    this.declarationSignalService.declarationUpdated$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((updatedDeclaration: Declaration) => {
+        this.declarations = this.declarations.map(d => d.id === updatedDeclaration.id ? updatedDeclaration : d);
+      });
+
+    this.declarationSignalService.declarationDeleted$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((deletedDeclarationId: string) => {
+        this.declarations = this.declarations.filter(d => d.id !== deletedDeclarationId);
+      });
   }
 
   getRandomWidth(minWidth: number, maxWidth: number): string {
@@ -58,5 +87,9 @@ export class DeclarationsListComponent {
 
   onCancelEdit(declaration: Declaration) {
     this.declarationSignalService.declarationEditCancelled(declaration.id);
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
   }
 }

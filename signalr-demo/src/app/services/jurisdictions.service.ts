@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../environments/environment";
-import { BehaviorSubject, Subject, tap } from "rxjs";
+import { BehaviorSubject, catchError, Subject, tap, throwError } from "rxjs";
 import { Jurisdiction } from "../models/jurisdiction.model";
 
 @Injectable({
@@ -9,12 +9,19 @@ import { Jurisdiction } from "../models/jurisdiction.model";
 })
 export class JurisdictionsService {
   jurisdictions$: Subject<Jurisdiction[] | null> = new BehaviorSubject<Jurisdiction[] | null>(null);
+  error$: Subject<any> = new Subject();
 
   constructor(private http: HttpClient) {
   }
 
   public getJurisdictions() {
     return this.http.get<Jurisdiction[]>(`${environment.apiBaseUrl}/api/jurisdictions`)
-      .pipe(tap(result => this.jurisdictions$.next(result)));
+      .pipe(
+        tap(result => this.jurisdictions$.next(result)),
+        catchError((err) => {
+          this.error$.next(err);
+          return throwError(err);
+        })
+      );
   }
 }

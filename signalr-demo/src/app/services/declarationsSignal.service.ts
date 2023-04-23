@@ -3,6 +3,7 @@ import * as signalR from '@microsoft/signalr';
 import { environment } from "../../environments/environment";
 import { Declaration } from "../models/declaration.model";
 import { Subject } from "rxjs";
+import { NotificationService } from "./notifications.service";
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class DeclarationsSignalService {
   userConnected$ = new Subject<string>();
   userDisconnected$ = new Subject<string>();
 
-  constructor() {
+  constructor(private notificationsService: NotificationService) {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${environment.apiBaseUrl}/hubs/declarations`)
       .build();
@@ -59,11 +60,11 @@ export class DeclarationsSignalService {
 
   declarationEditToggled(id: string) {
     this.hubConnection.invoke('declarationEditToggled', id)
-      .catch(); //  todo: add error handling
+      .catch((err) => this.notificationsService.showError(err));
   }
 
   declarationEditCancelled(id: string) {
     this.hubConnection.invoke('declarationEditCancelled', id)
-      .catch(); //  todo: add error handling
+      .catch((err) => this.notificationsService.showError(err));
   }
 }
