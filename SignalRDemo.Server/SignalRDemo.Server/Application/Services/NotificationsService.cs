@@ -45,6 +45,6 @@ public class NotificationsService : INotificationsService
 
         var jurisdictionGroup = HubHelper.GetGroupNameForJurisdiction(createdDeclaration.Jurisdiction);
 
-        await _hubContext.Clients.Group(jurisdictionGroup).DeclarationUpdated(createdDeclaration);
+        await _hubContext.Clients.Group(jurisdictionGroup).DeclarationCreated(createdDeclaration);
     }
 }
