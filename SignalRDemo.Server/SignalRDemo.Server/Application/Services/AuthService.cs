@@ -40,14 +40,14 @@ public class AuthService : IAuthService
 
         if (user == null)
         {
-            return null;
+            throw new AuthException("Invalid email or password.");
         }
 
         var isValidPassword = await _userManager.CheckPasswordAsync(user, loginData.Password);
 
         if (!isValidPassword)
         {
-            return null;
+            throw new AuthException("Invalid email or password.");
         }
 
         await _dbContext.Entry(user)

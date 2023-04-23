@@ -1,26 +1,30 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, of, Subject } from "rxjs";
+import { BehaviorSubject, catchError, of, Subject, throwError } from "rxjs";
 import { AuthResult, LoginRequest, RegisterRequest, User } from "../../models/user.model";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
 import { map } from "rxjs/operators";
+import { NotificationService } from "../../services/notifications.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private userKey = 'userData';
-  public user$: Subject<{ user: User, shouldRedirect: boolean } | null> = new BehaviorSubject<{ user: User, shouldRedirect: boolean } | null>(null);
-  public errors$: Subject<any> = new Subject<any>();
+  public user$: Subject<{ user: User, shouldRedirect: boolean }> = new Subject<{ user: User, shouldRedirect: boolean }>();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private notificationsService: NotificationService) {
   }
 
   public login(loginData: LoginRequest) {
     return this.http.post<AuthResult>(`${environment.apiBaseUrl}/api/Auth/login`, loginData)
       .pipe(
         map(this.handleAuthResponse.bind(this)),
-        catchError(this.handleError.bind(this))
+        catchError((err) => {
+          this.notificationsService.showError(err);
+          return throwError(err);
+        })
       );
   }
 
@@ -28,11 +32,15 @@ export class AuthService {
     return this.http.post<AuthResult>(`${environment.apiBaseUrl}/api/Auth/register`, registerData)
       .pipe(
         map(this.handleAuthResponse.bind(this)),
-        catchError(this.handleError.bind(this))
+        catchError((err) => {
+          this.notificationsService.showError(err);
+          return throwError(err);
+        })
       );
   }
 
   public autoLogin() {
+    console.log('Auto login start');
     const authResult: AuthResult = JSON.parse(localStorage.getItem(this.userKey)!);
 
     if (!authResult) {
@@ -46,6 +54,8 @@ export class AuthService {
       authResult.email,
       authResult.accessToken,
       authResult.expiresIn);
+
+    console.log('Auto login token: ', user.token);
 
     if (!user || !user.token) {
       localStorage.removeItem(this.userKey);
@@ -69,11 +79,6 @@ export class AuthService {
 
   public logOut() {
     localStorage.removeItem(this.userKey);
-    this.user$.next(null);
-  }
-
-  private handleError(err: HttpErrorResponse) {
-    this.errors$.next(err);
-    return of(null);
+    this.user$.next(null!);
   }
 }
