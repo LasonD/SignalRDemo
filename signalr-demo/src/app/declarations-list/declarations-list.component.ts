@@ -57,6 +57,7 @@ export class DeclarationsListComponent implements OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((createdDeclaration: Declaration) => {
         this.declarations = [createdDeclaration, ...this.declarations];
+        this.notificationsService.showInfo(`A new declaration for ${createdDeclaration.jurisdiction} was declared by ${createdDeclaration.declarantEmail}`, 'Declaration created');
       });
 
     this.declarationSignalService.declarationUpdated$
@@ -81,6 +82,19 @@ export class DeclarationsListComponent implements OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((declarationId: string) => {
         this.lockedDeclarations = this.lockedDeclarations.filter(id => id !== declarationId);
+      });
+
+    this.declarationSignalService.userConnected$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((email) => {
+        console.log('Showing info');
+        this.notificationsService.showInfo(`User ${email} connected.`);
+      });
+
+    this.declarationSignalService.userDisconnected$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((email) => {
+        this.notificationsService.showInfo(`User ${email} disconnected.`);
       });
   }
 

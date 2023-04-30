@@ -62,7 +62,7 @@ public class DeclarationsHub : Hub<IDeclarationsHub>
         {
             var groupName = HubHelper.GetGroupNameForJurisdiction(j);
             await Groups.AddToGroupAsync(connectionId, groupName);
-            await Clients.Group(groupName).UserConnected(email);
+            await Clients.GroupExcept(groupName, new[] { connectionId }).UserConnected(email);
         }));
 
         await base.OnConnectedAsync();
@@ -80,7 +80,7 @@ public class DeclarationsHub : Hub<IDeclarationsHub>
         {
             var groupName = HubHelper.GetGroupNameForJurisdiction(j);
             await Groups.AddToGroupAsync(connectionId, groupName);
-            await Clients.Group(groupName).UserDisconnected(email);
+            await Clients.GroupExcept(groupName, new[] { connectionId }).UserDisconnected(email);
         }));
 
         await base.OnDisconnectedAsync(exception);

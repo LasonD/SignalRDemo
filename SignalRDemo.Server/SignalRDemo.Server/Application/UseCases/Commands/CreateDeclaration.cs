@@ -59,7 +59,10 @@ public static class CreateDeclaration
 
         public async Task<DeclarationDto> Handle(Command command, CancellationToken cancellationToken)
         {
+            var jurisdiction = await _dbContext.Jurisdictions.FindAsync(command.Jurisdiction);
+
             var newDeclaration = _mapper.Map<Declaration>(command);
+            newDeclaration.Jurisdiction = jurisdiction!;
 
             _dbContext.Declarations.Add(newDeclaration);
 
