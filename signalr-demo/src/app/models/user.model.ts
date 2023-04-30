@@ -27,7 +27,7 @@ export class User implements UserModel {
               public expiresIn: number | null = null,
               public readonly expirationDate: Date | null = null) {
     if (expiresIn) {
-      this.expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+      this.expirationDate = new Date(new Date().getTime() + expiresIn);
     } else if (expirationDate) {
       this.expirationDate = new Date(expirationDate);
     }

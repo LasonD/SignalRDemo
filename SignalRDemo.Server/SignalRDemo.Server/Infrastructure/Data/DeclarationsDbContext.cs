@@ -80,7 +80,7 @@ public class DeclarationsDbContext : IdentityDbContext<User>
                 Email = "admin@localhost.com",
                 NormalizedEmail = "admin@localhost.com".ToUpperInvariant(),
                 NormalizedUserName = "admin@localhost.com".ToUpperInvariant(),
-                PasswordHash = hasher.HashPassword(null, "admin123"),
+                PasswordHash = hasher.HashPassword(null, "123adm"),
                 EmailConfirmed = true,
 
             },

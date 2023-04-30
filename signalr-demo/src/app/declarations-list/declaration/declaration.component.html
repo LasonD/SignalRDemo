@@ -27,6 +27,14 @@
       <span class="field-name">Declarant Email:</span>
       <span class="field-value">{{ declarationForm.get('declarantEmail')?.value }}</span>
     </p>
+    <p class="card-text">
+      <span class="field-name">Creation date: </span>
+      <span class="field-value">{{ declaration.creationDate | date }}</span>
+    </p>
+    <p class="card-text" *ngIf="declaration.lastUpdatedDate">
+      <span class="field-name">Last updated date: </span>
+      <span class="field-value">{{ declaration.lastUpdatedDate | date }}</span>
+    </p>
     <div class="d-flex justify-content-between mt-3">
       <button class="btn btn-primary stylish-btn" (click)="toggleEditMode()" *ngIf="!editMode" [disabled]="isLocked">Edit</button>
       <button class="btn btn-success stylish-btn" (click)="saveChanges()" *ngIf="editMode" [disabled]="isLocked">Save</button>

@@ -99,6 +99,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<IAuthService, AuthService>();
         services.AddTransient<INotificationsService, NotificationsService>();
+        services.AddTransient<ICache<>, InMemoryCache<>>();
+        services.AddTransient<IDeclarationsCacheManager, DeclarationsLockManager>();
 
         return services;
     }

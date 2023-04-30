@@ -46,6 +46,7 @@ public class DeclarationsController : ClientControllerBase
     {
         var command = _mapper.Map<UpdateDeclaration.Command>(updateDeclaration);
         command.Id = id;
+        command.UserId = GetRequiredAppUserId();
 
         var result = await _mediator.Send(command, cancellationToken);
 

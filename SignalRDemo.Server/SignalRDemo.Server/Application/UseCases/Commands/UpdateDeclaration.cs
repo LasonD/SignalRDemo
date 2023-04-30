@@ -6,6 +6,7 @@ using SignalRDemo.Server.Application.Dto;
 using SignalRDemo.Server.Application.Exceptions;
 using SignalRDemo.Server.Application.Models;
 using SignalRDemo.Server.Application.Services;
+using SignalRDemo.Server.Common.Helpers;
 using SignalRDemo.Server.Infrastructure.Data;
 
 namespace SignalRDemo.Server.Application.UseCases.Commands;
@@ -18,13 +19,15 @@ public static class UpdateDeclaration
         public string Description { get; set; } = null!;
         public string Jurisdiction { get; set; } = null!;
         public decimal NetMass { get; set; }
+        public string UserId { get; set; } = null!;
     }
 
     public class Validator : AbstractValidator<Command>
     {
-        public Validator(DeclarationsDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        public Validator(DeclarationsDbContext dbContext, IHttpContextAccessor httpContextAccessor, IDeclarationsCacheManager declarationsCacheManager)
         {
             var user = httpContextAccessor.HttpContext?.User;
+            var userId = user?.GetUserId()!;
 
             RuleFor(x => x.Description)
                 .NotEmpty()
@@ -42,6 +45,10 @@ public static class UpdateDeclaration
             RuleFor(x => x.NetMass)
                 .GreaterThan(0)
                 .WithMessage("Declaration should have a positive NetMass.");
+
+            RuleFor(x => x.Id)
+                .Must(x => !declarationsCacheManager.IsLockedByOtherUser(x, userId))
+                .WithMessage(_ => "Declaration is already in use by another user.");
         }
     }
 
@@ -50,12 +57,14 @@ public static class UpdateDeclaration
         private readonly IMapper _mapper;
         private readonly DeclarationsDbContext _dbContext;
         private readonly INotificationsService _notificationsService;
+        private readonly IDeclarationsCacheManager _declarationsCacheManager;
 
-        public Handler(IMapper mapper, DeclarationsDbContext dbContext, INotificationsService notificationsService)
+        public Handler(IMapper mapper, DeclarationsDbContext dbContext, INotificationsService notificationsService, IDeclarationsCacheManager declarationsCacheManager)
         {
             _mapper = mapper;
             _dbContext = dbContext;
             _notificationsService = notificationsService;
+            _declarationsCacheManager = declarationsCacheManager;
         }
 
         public async Task<DeclarationDto> Handle(Command command, CancellationToken cancellationToken)
@@ -67,17 +76,26 @@ public static class UpdateDeclaration
                 throw new NotFoundException(command.Id, nameof(Declaration));
             }
 
-            _mapper.Map(command, declaration);
+            _declarationsCacheManager.Lock(command.Id, command.UserId);
 
-            declaration.LastUpdatedDate = DateTime.UtcNow;
+            try
+            {
+                _mapper.Map(command, declaration);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+                declaration.LastUpdatedDate = DateTime.UtcNow;
 
-            var dto = _mapper.Map<DeclarationDto>(declaration);
+                await _dbContext.SaveChangesAsync(cancellationToken);
 
-            await _notificationsService.NotifyDeclarationUpdatedAsync(dto, cancellationToken);
+                var dto = _mapper.Map<DeclarationDto>(declaration);
 
-            return dto;
+                await _notificationsService.NotifyDeclarationUpdatedAsync(dto, cancellationToken);
+
+                return dto;
+            }
+            finally
+            {
+                _declarationsCacheManager.Unlock(command.Id);
+            }
         }
     }
 }

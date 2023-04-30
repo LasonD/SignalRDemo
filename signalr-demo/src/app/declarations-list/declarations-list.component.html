@@ -6,8 +6,8 @@
                    (save)="onDeclarationSave($event)"
                    (toggleEdit)="onToggleEdit($event)"
                    (cancelEdit)="onCancelEdit($event)"
-                   [isLocked]="isLocked(declaration.id)"
-                   [editMode]="isLocked(declaration.id)"
+                   [isLocked]="declaration.isLocked"
+                   [editMode]="declaration.isLocked"
                    [ngStyle]="{'flex-basis': calculateWidthFromNetMass(10, 40, declaration.netMass, 200)}"
   ></app-declaration>
 </div>

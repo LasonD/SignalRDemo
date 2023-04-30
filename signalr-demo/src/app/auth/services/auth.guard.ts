@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
     return this.authService.user$.pipe(
       take(1),
       map(result => {
-        console.log('In auth guard ', result);
+        console.log('In auth guard ', result?.user?.token);
         return !!result?.user?.token ? true : this.router.createUrlTree(['/auth']);
       }));
   }

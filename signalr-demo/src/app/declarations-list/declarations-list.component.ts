@@ -16,7 +16,6 @@ export class DeclarationsListComponent implements OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
 
   declarations: Declaration[] = [];
-  lockedDeclarations: string[] = [];
 
   jurisdictionCodes$!: Observable<string[]>;
 
@@ -75,19 +74,28 @@ export class DeclarationsListComponent implements OnDestroy {
     this.declarationSignalService.declarationEditToggled$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((declarationId: string) => {
-        this.lockedDeclarations = [...this.lockedDeclarations, declarationId];
+        this.declarations = this.declarations.map((d) => {
+          if (d.id === declarationId) {
+            d.isLocked = true;
+          }
+          return d;
+        });
       });
 
     this.declarationSignalService.declarationEditCancelled$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((declarationId: string) => {
-        this.lockedDeclarations = this.lockedDeclarations.filter(id => id !== declarationId);
+        this.declarations = this.declarations.map((d) => {
+          if (d.id === declarationId) {
+            d.isLocked = false;
+          }
+          return d;
+        });
       });
 
     this.declarationSignalService.userConnected$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((email) => {
-        console.log('Showing info');
         this.notificationsService.showInfo(`User ${email} connected.`);
       });
 
@@ -114,6 +122,10 @@ export class DeclarationsListComponent implements OnDestroy {
   }
 
   onDeclarationDelete(declaration: Declaration) {
+    if (!prompt('Are you sure?')) {
+      return;
+    }
+
     this.declarationsService.deleteDeclaration(declaration.id)
       .subscribe();
   }
@@ -128,9 +140,5 @@ export class DeclarationsListComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyed$.next(true);
-  }
-
-  isLocked(declarationId: string) {
-    return this.lockedDeclarations.some(id => id === declarationId);
   }
 }

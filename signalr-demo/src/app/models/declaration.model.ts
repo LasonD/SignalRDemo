@@ -5,6 +5,8 @@ export interface Declaration {
   displayColor: string;
   netMass: number;
   creationDate: Date;
+  lastUpdatedDate?: Date;
   declarantEmail: string;
   declarantId: string;
+  isLocked: boolean;
 }

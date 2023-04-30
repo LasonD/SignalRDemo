@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using SignalRDemo.Server.Application.Dto;
 using SignalRDemo.Server.Application.Exceptions;
 using SignalRDemo.Server.Application.Models;
+using SignalRDemo.Server.Application.Services;
 using SignalRDemo.Server.Common.Helpers;
 using SignalRDemo.Server.Infrastructure.Data;
 
@@ -25,15 +26,19 @@ public interface IDeclarationsHub
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class DeclarationsHub : Hub<IDeclarationsHub>
 {
+    private readonly IDeclarationsCacheManager _declarationsCacheManager;
     private readonly DeclarationsDbContext _dbContext;
 
-    public DeclarationsHub(DeclarationsDbContext dbContext)
+    public DeclarationsHub(DeclarationsDbContext dbContext, IDeclarationsCacheManager declarationsCacheManager)
     {
         _dbContext = dbContext;
+        _declarationsCacheManager = declarationsCacheManager;
     }
 
     public async Task DeclarationEditToggled(string declarationId)
     {
+        _declarationsCacheManager.Lock(declarationId, UserId);
+
         var jurisdiction = await GetDeclarationJurisdictionAsync(declarationId);
 
         var groupName = HubHelper.GetGroupNameForJurisdiction(jurisdiction);
@@ -43,6 +48,8 @@ public class DeclarationsHub : Hub<IDeclarationsHub>
 
     public async Task DeclarationEditCancelled(string declarationId)
     {
+        _declarationsCacheManager.Unlock(declarationId);
+
         var jurisdiction = await GetDeclarationJurisdictionAsync(declarationId);
 
         var groupName = HubHelper.GetGroupNameForJurisdiction(jurisdiction);
@@ -85,6 +92,8 @@ public class DeclarationsHub : Hub<IDeclarationsHub>
 
         await base.OnDisconnectedAsync(exception);
     }
+
+    private string UserId => Context.User?.GetUserId()!;
 
     private async Task<string> GetDeclarationJurisdictionAsync(string declarationId)
     {

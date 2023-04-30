@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SignalRDemo.Server.Application.Dto;
 using SignalRDemo.Server.Application.Exceptions;
 using SignalRDemo.Server.Application.Models;
+using SignalRDemo.Server.Application.Services;
 using SignalRDemo.Server.Infrastructure.Data;
 
 namespace SignalRDemo.Server.Application.UseCases.Queries;
@@ -18,23 +19,25 @@ public static class GetDeclarations
     public class Handler : IRequestHandler<Query, IEnumerable<DeclarationDto>>
     {
         private readonly IMapper _mapper;
+        private readonly IDeclarationsCacheManager _declarationsCacheManager;
         private readonly DeclarationsDbContext _dbContext;
 
-        public Handler(IMapper mapper, DeclarationsDbContext dbContext)
+        public Handler(IMapper mapper, DeclarationsDbContext dbContext, IDeclarationsCacheManager declarationsDeclarationsCacheManager)
         {
             _mapper = mapper;
             _dbContext = dbContext;
+            _declarationsCacheManager = declarationsDeclarationsCacheManager;
         }
 
-        public async Task<IEnumerable<DeclarationDto>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<DeclarationDto>> Handle(Query query, CancellationToken cancellationToken)
         {
             var user = _dbContext.Users
                     .Include(u => u.Jurisdictions)
-                    .FirstOrDefault(u => u.Id == request.UserId);
+                    .FirstOrDefault(u => u.Id == query.UserId);
 
             if (user == null)
             {
-                throw new NotFoundException(request.UserId, nameof(User));
+                throw new NotFoundException(query.UserId, nameof(User));
             }
 
             var jurisdictionCodes = user.Jurisdictions.Select(j => j.Code).ToList();
@@ -46,6 +49,11 @@ public static class GetDeclarations
                 .ToListAsync(cancellationToken);
 
             var result = _mapper.Map<List<DeclarationDto>>(declarations);
+
+            foreach (var dto in result)
+            {
+                dto.IsLocked = _declarationsCacheManager.IsLocked(dto.Id);
+            }
 
             return result;
         }
