@@ -21,6 +21,9 @@ public class MappingProfile : Profile
             )
             .ForMember(x => x.DisplayColor,
                 opt => opt.MapFrom(src => src.Jurisdiction.DisplayColor)
+            )
+            .ForMember(x => x.Jurisdiction,
+                opt => opt.MapFrom(src => src.JurisdictionCode)
             );
 
         CreateMap<Jurisdiction, JurisdictionDto>();

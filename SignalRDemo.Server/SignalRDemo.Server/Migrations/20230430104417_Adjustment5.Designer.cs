@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SignalRDemo.Server.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using SignalRDemo.Server.Infrastructure.Data;
 namespace SignalRDemo.Server.Migrations
 {
     [DbContext(typeof(DeclarationsDbContext))]
-    partial class DeclarationsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230430104417_Adjustment5")]
+    partial class Adjustment5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
