@@ -6,6 +6,7 @@ public class Declaration
     public string Description { get; set; } = null!;
     public decimal NetMass { get; set; }
     public DateTime CreationDate { get; set; } = DateTime.UtcNow;
+    public DateTime? LastUpdatedDate{ get; set; }
 
     public string JurisdictionCode { get; set; } = null!;
     public Jurisdiction Jurisdiction { get; set; } = null!;

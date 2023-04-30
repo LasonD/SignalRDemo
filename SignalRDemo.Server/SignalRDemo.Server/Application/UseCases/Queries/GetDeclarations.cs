@@ -1,8 +1,6 @@
 using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using SignalRDemo.Server.Api.Hubs;
 using SignalRDemo.Server.Application.Dto;
 using SignalRDemo.Server.Application.Exceptions;
 using SignalRDemo.Server.Application.Models;
@@ -21,13 +19,11 @@ public static class GetDeclarations
     {
         private readonly IMapper _mapper;
         private readonly DeclarationsDbContext _dbContext;
-        private readonly IHubContext<DeclarationsHub, IDeclarationsHub> _declarationsHubContext;
 
-        public Handler(IMapper mapper, DeclarationsDbContext dbContext, IHubContext<DeclarationsHub, IDeclarationsHub> declarationsHubContext)
+        public Handler(IMapper mapper, DeclarationsDbContext dbContext)
         {
             _mapper = mapper;
             _dbContext = dbContext;
-            _declarationsHubContext = declarationsHubContext;
         }
 
         public async Task<IEnumerable<DeclarationDto>> Handle(Query request, CancellationToken cancellationToken)
@@ -46,6 +42,7 @@ public static class GetDeclarations
             var declarations = await _dbContext.Declarations
                 .Include(d => d.Declarant)
                 .Where(d => jurisdictionCodes.Contains(d.JurisdictionCode))
+                .OrderBy(d => d.CreationDate)
                 .ToListAsync(cancellationToken);
 
             var result = _mapper.Map<List<DeclarationDto>>(declarations);

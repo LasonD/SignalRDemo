@@ -52,7 +52,7 @@ public class DeclarationsController : ClientControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteDeclaration(string id, CancellationToken cancellationToken)
     {
         var command = new DeleteDeclaration.Command

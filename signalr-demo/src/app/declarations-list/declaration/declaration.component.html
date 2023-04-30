@@ -1,9 +1,9 @@
-<div class="card text-dark mb-3 p-1" [style.background-color]="getBackgroundColor()" [ngClass]="{'faded': isLocked}">
+<div class="card text-dark mb-3 p-1" [style.background-color]="getBackgroundColor()" [ngClass]="{'faded': isLocked}" [formGroup]="declarationForm">
   <div class="card-body">
     <h5 class="card-title mb-4">
       <span class="field-name">Jurisdiction:</span>
       <span *ngIf="!editMode" class="field-value">{{ declaration.jurisdiction }}</span>
-      <select [(ngModel)]="declaration.jurisdiction" *ngIf="editMode" class="form-select edit-mode-margin" [disabled]="isLocked">
+      <select formControlName="jurisdiction" *ngIf="editMode" class="form-select edit-mode-margin" [disabled]="isLocked">
         <option *ngFor="let jurisdiction of jurisdictions" [value]="jurisdiction">{{ jurisdiction }}</option>
       </select>
     </h5>
@@ -13,7 +13,7 @@
     </p>
     <div *ngIf="editMode" class="edit-mode-margin mb-3">
       <span class="field-name mb-2">Description:</span>
-      <textarea class="form-control" [(ngModel)]="declaration.description" [disabled]="isLocked"></textarea>
+      <textarea formControlName="description" class="form-control" [disabled]="isLocked"></textarea>
     </div>
     <p class="card-text" *ngIf="!editMode">
       <span class="field-name">Net Mass:</span>
@@ -21,11 +21,11 @@
     </p>
     <div *ngIf="editMode" class="edit-mode-margin mb-3">
       <span class="field-name">Net Mass:</span>
-      <input type="number" class="form-control" [(ngModel)]="declaration.netMass" min="0" step="0.01" [disabled]="isLocked">
+      <input formControlName="netMass" type="number" class="form-control" min="0" step="0.01" [disabled]="isLocked">
     </div>
     <p class="card-text">
       <span class="field-name">Declarant Email:</span>
-      <span class="field-value">{{ declaration.declarantEmail }}</span>
+      <span class="field-value">{{ declarationForm.get('declarantEmail')?.value }}</span>
     </p>
     <div class="d-flex justify-content-between mt-3">
       <button class="btn btn-primary stylish-btn" (click)="toggleEditMode()" *ngIf="!editMode" [disabled]="isLocked">Edit</button>

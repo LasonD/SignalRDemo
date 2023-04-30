@@ -17,6 +17,7 @@ public static class UpdateDeclaration
         public string Id { get; set; } = null!;
         public string Description { get; set; } = null!;
         public string Jurisdiction { get; set; } = null!;
+        public decimal NetMass { get; set; }
     }
 
     public class Validator : AbstractValidator<Command>
@@ -37,6 +38,10 @@ public static class UpdateDeclaration
                 .WithMessage(x => $"Cannot update jurisdiction. You are not authorized to create declarations for {x} jurisdiction.")
                 .MustAsync((x, ct) => dbContext.Jurisdictions.AnyAsync(j => j.Code == x, ct))
                 .WithMessage(x => $"{x.Jurisdiction} is not a known jurisdiction.");
+
+            RuleFor(x => x.NetMass)
+                .GreaterThan(0)
+                .WithMessage("Declaration should have a positive NetMass.");
         }
     }
 
@@ -63,6 +68,8 @@ public static class UpdateDeclaration
             }
 
             _mapper.Map(command, declaration);
+
+            declaration.LastUpdatedDate = DateTime.UtcNow;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
