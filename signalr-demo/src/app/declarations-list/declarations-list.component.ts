@@ -53,6 +53,12 @@ export class DeclarationsListComponent implements OnDestroy {
   }
 
   subscribeToRealTimeEvents() {
+    this.declarationSignalService.declarationCreated$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((createdDeclaration: Declaration) => {
+        this.declarations = [createdDeclaration, ...this.declarations];
+      });
+
     this.declarationSignalService.declarationUpdated$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((updatedDeclaration: Declaration) => {

@@ -42,7 +42,7 @@ public static class GetDeclarations
             var declarations = await _dbContext.Declarations
                 .Include(d => d.Declarant)
                 .Where(d => jurisdictionCodes.Contains(d.JurisdictionCode))
-                .OrderBy(d => d.CreationDate)
+                .OrderByDescending(d => d.CreationDate)
                 .ToListAsync(cancellationToken);
 
             var result = _mapper.Map<List<DeclarationDto>>(declarations);
