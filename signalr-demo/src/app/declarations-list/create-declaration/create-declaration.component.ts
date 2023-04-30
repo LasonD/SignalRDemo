@@ -1,20 +1,24 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject } from "rxjs";
-import { Declaration } from "../../models/declaration.model";
+import { DeclarationsService } from "../../services/declarations.service";
+import { JurisdictionsService } from "../../services/jurisdictions.service";
+import { Subject, takeUntil } from "rxjs";
 
 @Component({
   selector: 'app-create-declaration',
   templateUrl: './create-declaration.component.html',
   styleUrls: ['./create-declaration.component.scss']
 })
-export class CreateDeclarationComponent implements OnInit {
-  jurisdictions: string[] = ['Jurisdiction A', 'Jurisdiction B', 'Jurisdiction C'];
+export class CreateDeclarationComponent implements OnInit, OnDestroy {
+  destroyed$: Subject<boolean> = new Subject<boolean>();
+
+  @Input() jurisdictions: string[] = [];
+
   declarationForm: FormGroup;
 
-  @Output() submitted: Subject<Declaration> = new Subject<Declaration>();
-
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,
+              private declarationsService: DeclarationsService,
+              private jurisdictionService: JurisdictionsService) {
     this.declarationForm = this.fb.group({
       description: ['', Validators.required],
       jurisdiction: [this.jurisdictions[0]],
@@ -23,6 +27,15 @@ export class CreateDeclarationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.jurisdictionService
+      .getJurisdictions()
+      .subscribe();
+
+    this.jurisdictionService.jurisdictions$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((jurisdictions) => {
+        this.jurisdictions = jurisdictions?.map((j) => j.code) ?? [];
+      })
   }
 
   onSubmit(): void {
@@ -30,8 +43,13 @@ export class CreateDeclarationComponent implements OnInit {
       return;
     }
 
-    this.declarationForm.reset({ jurisdiction: this.jurisdictions[0] });
+    this.declarationsService.createDeclaration(this.declarationForm.value)
+      .subscribe();
 
-    this.submitted.subscribe(this.declarationForm.value);
+    this.declarationForm.reset({ jurisdiction: this.jurisdictions[0] });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
   }
 }

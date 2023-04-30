@@ -2,7 +2,7 @@ namespace SignalRDemo.Server.Application.Models;
 
 public class Declaration
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; } = null!;
     public string Description { get; set; } = null!;
     public decimal NetMass { get; set; }
     public DateTime CreationDate { get; set; } = DateTime.UtcNow;

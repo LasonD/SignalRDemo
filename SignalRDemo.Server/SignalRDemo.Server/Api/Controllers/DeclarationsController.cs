@@ -34,23 +34,25 @@ public class DeclarationsController : ClientControllerBase
     public async Task<IActionResult> CreateDeclaration(CreateDeclarationDto createDeclaration, CancellationToken cancellationToken)
     {
         var command = _mapper.Map<CreateDeclaration.Command>(createDeclaration);
+        command.DeclarantId = GetRequiredAppUserId();
 
         var result = await _mediator.Send(command, cancellationToken);
 
         return Ok(result);
     }
 
-    [HttpPut("")]
-    public async Task<IActionResult> UpdateDeclaration(UpdateDeclarationDto updateDeclaration, CancellationToken cancellationToken)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateDeclaration(string id, UpdateDeclarationDto updateDeclaration, CancellationToken cancellationToken)
     {
         var command = _mapper.Map<UpdateDeclaration.Command>(updateDeclaration);
+        command.Id = id;
 
         var result = await _mediator.Send(command, cancellationToken);
 
         return Ok(result);
     }
 
-    [HttpPut("")]
+    [HttpDelete("")]
     public async Task<IActionResult> DeleteDeclaration(string id, CancellationToken cancellationToken)
     {
         var command = new DeleteDeclaration.Command

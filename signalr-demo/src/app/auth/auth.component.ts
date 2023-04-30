@@ -35,7 +35,6 @@ export class AuthComponent implements OnInit {
 
     this.authService.user$
       .pipe(
-        skip(1),
         filter(result => !!result?.user?.token && result.shouldRedirect)
       )
       .subscribe(u => {

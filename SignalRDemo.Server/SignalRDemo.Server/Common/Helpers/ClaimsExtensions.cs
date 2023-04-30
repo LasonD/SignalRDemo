@@ -1,4 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
 using SignalRDemo.Server.Application.Exceptions;
 using System.Security.Claims;
 
@@ -8,7 +7,7 @@ public static class ClaimsExtensions
 { 
     public static string GetRequiredUserEmail(this ClaimsPrincipal? principal)
     {
-        var email = principal?.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value;
+        var email = principal?.FindFirstValue(ClaimTypes.Email);
 
         if (email == null)
         {

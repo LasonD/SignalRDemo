@@ -19,13 +19,13 @@ export interface AuthResult {
   expiresIn: number;
 }
 
-export class User {
+export class User implements UserModel {
   constructor(public userId: string,
               public username: string,
               public email: string,
-              private _token: string,
-              private expiresIn: number | null = null,
-              private readonly expirationDate: Date | null = null) {
+              public _token: string,
+              public expiresIn: number | null = null,
+              public readonly expirationDate: Date | null = null) {
     if (expiresIn) {
       this.expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
     } else if (expirationDate) {
@@ -40,4 +40,13 @@ export class User {
 
     return this._token;
   }
+}
+
+export interface UserModel {
+  expirationDate: Date | null,
+  userId: string,
+  username: string,
+  email: string,
+  _token?: string | null,
+  expiresIn: number | null,
 }

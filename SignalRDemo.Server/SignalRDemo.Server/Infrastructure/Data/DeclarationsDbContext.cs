@@ -28,6 +28,13 @@ public class DeclarationsDbContext : IdentityDbContext<User>
             .HasKey(x => x.Code);
 
         builder.Entity<Declaration>()
+            .Property(x => x.Id)
+            .ValueGeneratedOnAdd();
+
+        builder.Entity<Declaration>()
+            .HasKey(x => x.Id);
+
+        builder.Entity<Declaration>()
             .HasOne(x => x.Jurisdiction)
             .WithMany()
             .HasForeignKey(x => x.JurisdictionCode);
@@ -119,7 +126,7 @@ public class DeclarationsDbContext : IdentityDbContext<User>
         {
             new()
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Description = "Test GB declaration 1",
                 JurisdictionCode = "GB",
                 DeclarantId = users[0].Id,
@@ -128,7 +135,7 @@ public class DeclarationsDbContext : IdentityDbContext<User>
             },
             new()
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Description = "Test BE declaration 1",
                 JurisdictionCode = "BE",
                 DeclarantId = users[0].Id,
@@ -137,7 +144,7 @@ public class DeclarationsDbContext : IdentityDbContext<User>
             },
             new()
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Description = "Test DE declaration 1",
                 JurisdictionCode = "DE",
                 DeclarantId = users[0].Id,
@@ -147,7 +154,7 @@ public class DeclarationsDbContext : IdentityDbContext<User>
 
             new()
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Description = "Test GB declaration 2",
                 JurisdictionCode = "GB",
                 DeclarantId = users[1].Id,
@@ -156,7 +163,7 @@ public class DeclarationsDbContext : IdentityDbContext<User>
             },
             new()
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Description = "Test BE declaration 2",
                 JurisdictionCode = "BE",
                 DeclarantId = users[1].Id,
@@ -165,7 +172,7 @@ public class DeclarationsDbContext : IdentityDbContext<User>
             },
             new()
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Description = "Test DE declaration 2",
                 JurisdictionCode = "DE",
                 DeclarantId = users[1].Id,

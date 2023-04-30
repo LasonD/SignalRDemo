@@ -57,17 +57,11 @@ public static class CreateDeclaration
             _notificationsService = notificationsService;
         }
 
-        public async Task<DeclarationDto> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<DeclarationDto> Handle(Command command, CancellationToken cancellationToken)
         {
-            var newDeclaration = new Declaration()
-            {
-                Description = request.Description,
-                Jurisdiction = new Jurisdiction(request.Jurisdiction),
-                NetMass = request.NetMass,
-                DeclarantId = request.DeclarantId
-            };
+            var newDeclaration = _mapper.Map<Declaration>(command);
 
-            await _dbContext.Declarations.AddAsync(newDeclaration, cancellationToken);
+            _dbContext.Declarations.Add(newDeclaration);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

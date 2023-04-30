@@ -27,5 +27,10 @@ public class MappingProfile : Profile
 
         CreateMap<CreateDeclarationDto, CreateDeclaration.Command>();
         CreateMap<UpdateDeclarationDto, UpdateDeclaration.Command>();
+
+        CreateMap<CreateDeclaration.Command, Declaration>()
+            .ForMember(x => x.JurisdictionCode, opt => opt.MapFrom(x => x.Jurisdiction));
+        CreateMap<UpdateDeclaration.Command, Declaration>()
+            .ForMember(x => x.JurisdictionCode, opt => opt.MapFrom(x => x.Jurisdiction));
     }
 }

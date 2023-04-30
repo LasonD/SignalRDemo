@@ -25,6 +25,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<DeclarationsHub>("hubs/declarations");
+app.MapHub<DeclarationsHub>("/hubs/declarations");
 
 app.Run();

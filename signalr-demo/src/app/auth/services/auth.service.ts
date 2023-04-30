@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, of, Subject, throwError } from "rxjs";
-import { AuthResult, LoginRequest, RegisterRequest, User } from "../../models/user.model";
+import { BehaviorSubject, catchError, Subject, throwError } from "rxjs";
+import { AuthResult, LoginRequest, RegisterRequest, User, UserModel } from "../../models/user.model";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
 import { map } from "rxjs/operators";
@@ -11,7 +11,7 @@ import { NotificationService } from "../../services/notifications.service";
 })
 export class AuthService {
   private userKey = 'userData';
-  public user$: Subject<{ user: User, shouldRedirect: boolean }> = new Subject<{ user: User, shouldRedirect: boolean }>();
+  public user$: Subject<{ user: User, shouldRedirect: boolean }> = new BehaviorSubject<{ user: User, shouldRedirect: boolean }>(null!);
 
   constructor(private http: HttpClient,
               private notificationsService: NotificationService) {
@@ -40,28 +40,27 @@ export class AuthService {
   }
 
   public autoLogin() {
-    console.log('Auto login start');
-    const authResult: AuthResult = JSON.parse(localStorage.getItem(this.userKey)!);
+    const userData: UserModel = JSON.parse(localStorage.getItem(this.userKey)!);
 
-    if (!authResult) {
+    if (!userData) {
       this.user$.next(null!);
       return;
     }
 
     const user = new User(
-      authResult.userId,
-      authResult.username,
-      authResult.email,
-      authResult.accessToken,
-      authResult.expiresIn);
-
-    console.log('Auto login token: ', user.token);
+      userData.userId,
+      userData.username,
+      userData.email,
+      userData._token!,
+      null,
+      userData.expirationDate);
 
     if (!user || !user.token) {
       localStorage.removeItem(this.userKey);
+      return;
     }
 
-    this.user$.next({ user, shouldRedirect: false });
+    this.user$.next({ user, shouldRedirect: true });
   }
 
   private handleAuthResponse(authResponse: AuthResult) {
@@ -72,7 +71,7 @@ export class AuthService {
       authResponse.accessToken,
       authResponse.expiresIn);
 
-    localStorage.setItem(this.userKey, JSON.stringify(authResponse));
+    localStorage.setItem(this.userKey, JSON.stringify(user));
 
     this.user$.next({ user, shouldRedirect: true });
   }

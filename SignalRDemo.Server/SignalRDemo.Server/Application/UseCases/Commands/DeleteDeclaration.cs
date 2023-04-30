@@ -48,18 +48,18 @@ public static class DeleteDeclaration
             _notificationsService = notificationsService;
         }
 
-        public async Task<DeclarationDto> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<DeclarationDto> Handle(Command command, CancellationToken cancellationToken)
         {
-            var declaration = await _dbContext.Declarations.FindAsync(request.Id, cancellationToken);
+            var declaration = await _dbContext.Declarations.FindAsync(command.Id, cancellationToken);
 
             if (declaration == null)
             {
-                throw new NotFoundException(request.Id, nameof(Declaration));
+                throw new NotFoundException(command.Id, nameof(Declaration));
             }
 
-            if (!request.UserJurisdictions.Contains(declaration.JurisdictionCode))
+            if (!command.UserJurisdictions.Contains(declaration.JurisdictionCode))
             {
-                throw new BusinessException($"The user {request.UserId} is not eligible to delete declarations for {declaration.JurisdictionCode} jurisdiction");
+                throw new BusinessException($"The user {command.UserId} is not eligible to delete declarations for {declaration.JurisdictionCode} jurisdiction");
             }
 
             var removedDeclaration = _dbContext.Declarations.Remove(declaration);

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SignalRDemo.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Initial3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -174,7 +174,7 @@ namespace SignalRDemo.Server.Migrations
                 name: "Declarations",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     NetMass = table.Column<decimal>(type: "TEXT", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -227,8 +227,8 @@ namespace SignalRDemo.Server.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "8f474092-4b21-40a0-a09c-a9fcc9d3fbd4", null, "Administrator", "ADMINISTRATOR" },
-                    { "94f98f25-b5b4-47e5-b7cb-4141f276b472", null, "User", "USER" }
+                    { "0afcad75-ddf0-4062-8b40-ce1506caeda3", null, "Administrator", "ADMINISTRATOR" },
+                    { "f30cfe87-b8f8-495b-857a-acd444192d34", null, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
@@ -236,8 +236,8 @@ namespace SignalRDemo.Server.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "27241cdd-e16b-4755-bb51-fd3561273c46", 0, "f538b547-7379-4008-9eaf-fcf4a2f8c712", "admin@localhost.com", true, false, null, "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAED+PWgXpTB3fczGEFMc8PZ3Nn/Yh7ZcuY5Z2HYN5PL1McZJLY0P+iB5VUPOZ82zlbw==", null, false, "50b1279f-aaaf-45ae-8420-291025a93021", false, null },
-                    { "ddac18d6-c588-4987-910c-2987885871f5", 0, "68f136c5-cd51-429a-860f-c567ba8a6390", "user@localhost.com", true, false, null, "USER@LOCALHOST.COM", "USER@LOCALHOST.COM", "AQAAAAIAAYagAAAAEHloJAcjpcRBtbgok+GHRFJWn4KFrYunp8gNG3OuQhoEqh1RRINzhVIKH63VPDAzaQ==", null, false, "2024f74e-57c8-4ee5-8695-6897e34a151e", false, null }
+                    { "04fb52bc-821b-43d7-9995-576d52025a28", 0, "3aceb061-9889-44d0-ac56-2564a574d5eb", "user@localhost.com", true, false, null, "USER@LOCALHOST.COM", "USER@LOCALHOST.COM", "AQAAAAIAAYagAAAAEAi0aNGNhaKfwc1H+fsfgL6+mndNcC62SvMzImEjIdSDav+qixOajKN7JXo1DijlsQ==", null, false, "afa56254-3547-4091-9a3c-a21162eb2b4d", false, null },
+                    { "36cdea02-f282-40c4-8fca-a62e62825a5c", 0, "3a522e1c-53ee-4ad2-a170-f993bc5086d5", "admin@localhost.com", true, false, null, "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEMf+wHQ49DWVzE83F9ymXNoK14VjhwsTvithOs/c2PA+V3TJ37001dC+o/ZUSpqltw==", null, false, "04302775-9345-4f3f-a878-9534afc539db", false, null }
                 });
 
             migrationBuilder.InsertData(
@@ -258,8 +258,8 @@ namespace SignalRDemo.Server.Migrations
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[,]
                 {
-                    { "8f474092-4b21-40a0-a09c-a9fcc9d3fbd4", "27241cdd-e16b-4755-bb51-fd3561273c46" },
-                    { "94f98f25-b5b4-47e5-b7cb-4141f276b472", "ddac18d6-c588-4987-910c-2987885871f5" }
+                    { "f30cfe87-b8f8-495b-857a-acd444192d34", "04fb52bc-821b-43d7-9995-576d52025a28" },
+                    { "0afcad75-ddf0-4062-8b40-ce1506caeda3", "36cdea02-f282-40c4-8fca-a62e62825a5c" }
                 });
 
             migrationBuilder.InsertData(
@@ -267,12 +267,12 @@ namespace SignalRDemo.Server.Migrations
                 columns: new[] { "Id", "CreationDate", "DeclarantId", "Description", "JurisdictionCode", "NetMass" },
                 values: new object[,]
                 {
-                    { new Guid("4408e0c5-ace9-4997-b2b1-5fdd8b3f2a6d"), new DateTime(2023, 4, 22, 18, 58, 51, 393, DateTimeKind.Utc).AddTicks(8383), "ddac18d6-c588-4987-910c-2987885871f5", "Test DE declaration 2", "DE", 40m },
-                    { new Guid("8b2d771b-2569-4799-998c-d5132e7521e2"), new DateTime(2023, 4, 20, 18, 58, 51, 393, DateTimeKind.Utc).AddTicks(8237), "27241cdd-e16b-4755-bb51-fd3561273c46", "Test BE declaration 1", "BE", 60m },
-                    { new Guid("bf21cda8-74f4-4d9b-b264-8aaab33c9503"), new DateTime(2023, 4, 21, 18, 58, 51, 393, DateTimeKind.Utc).AddTicks(8241), "27241cdd-e16b-4755-bb51-fd3561273c46", "Test DE declaration 1", "DE", 50m },
-                    { new Guid("da8b5ed7-e6e9-47c8-9072-d14e4871475a"), new DateTime(2023, 4, 22, 6, 58, 51, 393, DateTimeKind.Utc).AddTicks(8376), "ddac18d6-c588-4987-910c-2987885871f5", "Test BE declaration 2", "BE", 70m },
-                    { new Guid("e5991c07-649c-48f6-a218-1673fb3b0159"), new DateTime(2023, 4, 21, 6, 58, 51, 393, DateTimeKind.Utc).AddTicks(8253), "ddac18d6-c588-4987-910c-2987885871f5", "Test GB declaration 2", "GB", 90m },
-                    { new Guid("ecdf4745-6c8a-419f-ad47-4183e3da145b"), new DateTime(2023, 4, 19, 18, 58, 51, 393, DateTimeKind.Utc).AddTicks(8225), "27241cdd-e16b-4755-bb51-fd3561273c46", "Test GB declaration 1", "GB", 80m }
+                    { "2e6b3059-0dbd-41ed-81bd-197acee92a76", new DateTime(2023, 4, 27, 19, 32, 26, 442, DateTimeKind.Utc).AddTicks(867), "36cdea02-f282-40c4-8fca-a62e62825a5c", "Test BE declaration 1", "BE", 60m },
+                    { "74e5ebab-e280-4932-8b76-99235e78b08d", new DateTime(2023, 4, 28, 19, 32, 26, 442, DateTimeKind.Utc).AddTicks(874), "36cdea02-f282-40c4-8fca-a62e62825a5c", "Test DE declaration 1", "DE", 50m },
+                    { "8fc1a202-00eb-4e37-a970-57a7fdd8cd3f", new DateTime(2023, 4, 29, 19, 32, 26, 442, DateTimeKind.Utc).AddTicks(913), "04fb52bc-821b-43d7-9995-576d52025a28", "Test DE declaration 2", "DE", 40m },
+                    { "99a24116-3fba-48e0-8256-dd08c72cfd4c", new DateTime(2023, 4, 28, 7, 32, 26, 442, DateTimeKind.Utc).AddTicks(899), "04fb52bc-821b-43d7-9995-576d52025a28", "Test GB declaration 2", "GB", 90m },
+                    { "a5f1c866-0233-4d02-99a5-59a02a191c0f", new DateTime(2023, 4, 29, 7, 32, 26, 442, DateTimeKind.Utc).AddTicks(905), "04fb52bc-821b-43d7-9995-576d52025a28", "Test BE declaration 2", "BE", 70m },
+                    { "b5926c56-a88c-43ef-aeb8-a87478b0f525", new DateTime(2023, 4, 26, 19, 32, 26, 442, DateTimeKind.Utc).AddTicks(851), "36cdea02-f282-40c4-8fca-a62e62825a5c", "Test GB declaration 1", "GB", 80m }
                 });
 
             migrationBuilder.InsertData(
@@ -280,15 +280,15 @@ namespace SignalRDemo.Server.Migrations
                 columns: new[] { "JurisdictionCode", "UserId" },
                 values: new object[,]
                 {
-                    { "BE", "27241cdd-e16b-4755-bb51-fd3561273c46" },
-                    { "BE", "ddac18d6-c588-4987-910c-2987885871f5" },
-                    { "DE", "27241cdd-e16b-4755-bb51-fd3561273c46" },
-                    { "DE", "ddac18d6-c588-4987-910c-2987885871f5" },
-                    { "GB", "27241cdd-e16b-4755-bb51-fd3561273c46" },
-                    { "GB", "ddac18d6-c588-4987-910c-2987885871f5" },
-                    { "IE", "27241cdd-e16b-4755-bb51-fd3561273c46" },
-                    { "NL", "27241cdd-e16b-4755-bb51-fd3561273c46" },
-                    { "PL", "27241cdd-e16b-4755-bb51-fd3561273c46" }
+                    { "BE", "04fb52bc-821b-43d7-9995-576d52025a28" },
+                    { "BE", "36cdea02-f282-40c4-8fca-a62e62825a5c" },
+                    { "DE", "04fb52bc-821b-43d7-9995-576d52025a28" },
+                    { "DE", "36cdea02-f282-40c4-8fca-a62e62825a5c" },
+                    { "GB", "04fb52bc-821b-43d7-9995-576d52025a28" },
+                    { "GB", "36cdea02-f282-40c4-8fca-a62e62825a5c" },
+                    { "IE", "36cdea02-f282-40c4-8fca-a62e62825a5c" },
+                    { "NL", "36cdea02-f282-40c4-8fca-a62e62825a5c" },
+                    { "PL", "36cdea02-f282-40c4-8fca-a62e62825a5c" }
                 });
 
             migrationBuilder.CreateIndex(

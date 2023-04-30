@@ -11,8 +11,8 @@ using SignalRDemo.Server.Infrastructure.Data;
 namespace SignalRDemo.Server.Migrations
 {
     [DbContext(typeof(DeclarationsDbContext))]
-    [Migration("20230422185851_Initial")]
-    partial class Initial
+    [Migration("20230430092322_Adjustment3")]
+    partial class Adjustment3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,13 +48,13 @@ namespace SignalRDemo.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8f474092-4b21-40a0-a09c-a9fcc9d3fbd4",
+                            Id = "6f8bb596-5ade-4a78-87a1-bde268da5229",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "94f98f25-b5b4-47e5-b7cb-4141f276b472",
+                            Id = "6a5cefd6-9197-4b82-90f5-751ac32e909b",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -145,13 +145,13 @@ namespace SignalRDemo.Server.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "27241cdd-e16b-4755-bb51-fd3561273c46",
-                            RoleId = "8f474092-4b21-40a0-a09c-a9fcc9d3fbd4"
+                            UserId = "76ca7449-97ce-49a2-83bc-2707b0f37ce7",
+                            RoleId = "6f8bb596-5ade-4a78-87a1-bde268da5229"
                         },
                         new
                         {
-                            UserId = "ddac18d6-c588-4987-910c-2987885871f5",
-                            RoleId = "94f98f25-b5b4-47e5-b7cb-4141f276b472"
+                            UserId = "1e2f4b95-db12-4f0e-a5ec-369458b14e5d",
+                            RoleId = "6a5cefd6-9197-4b82-90f5-751ac32e909b"
                         });
                 });
 
@@ -176,7 +176,7 @@ namespace SignalRDemo.Server.Migrations
 
             modelBuilder.Entity("SignalRDemo.Server.Application.Models.Declaration", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
@@ -209,54 +209,54 @@ namespace SignalRDemo.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("ecdf4745-6c8a-419f-ad47-4183e3da145b"),
-                            CreationDate = new DateTime(2023, 4, 19, 18, 58, 51, 393, DateTimeKind.Utc).AddTicks(8225),
-                            DeclarantId = "27241cdd-e16b-4755-bb51-fd3561273c46",
+                            Id = "4971ee15-f448-468b-8bcf-b315cc40bac5",
+                            CreationDate = new DateTime(2023, 4, 27, 9, 23, 22, 64, DateTimeKind.Utc).AddTicks(2500),
+                            DeclarantId = "76ca7449-97ce-49a2-83bc-2707b0f37ce7",
                             Description = "Test GB declaration 1",
                             JurisdictionCode = "GB",
                             NetMass = 80m
                         },
                         new
                         {
-                            Id = new Guid("8b2d771b-2569-4799-998c-d5132e7521e2"),
-                            CreationDate = new DateTime(2023, 4, 20, 18, 58, 51, 393, DateTimeKind.Utc).AddTicks(8237),
-                            DeclarantId = "27241cdd-e16b-4755-bb51-fd3561273c46",
+                            Id = "00f63ff3-9957-494e-b799-b06be8aeaa9d",
+                            CreationDate = new DateTime(2023, 4, 28, 9, 23, 22, 64, DateTimeKind.Utc).AddTicks(2513),
+                            DeclarantId = "76ca7449-97ce-49a2-83bc-2707b0f37ce7",
                             Description = "Test BE declaration 1",
                             JurisdictionCode = "BE",
                             NetMass = 60m
                         },
                         new
                         {
-                            Id = new Guid("bf21cda8-74f4-4d9b-b264-8aaab33c9503"),
-                            CreationDate = new DateTime(2023, 4, 21, 18, 58, 51, 393, DateTimeKind.Utc).AddTicks(8241),
-                            DeclarantId = "27241cdd-e16b-4755-bb51-fd3561273c46",
+                            Id = "1dac13ed-ef79-42c9-90d3-7777776ff00f",
+                            CreationDate = new DateTime(2023, 4, 29, 9, 23, 22, 64, DateTimeKind.Utc).AddTicks(2518),
+                            DeclarantId = "76ca7449-97ce-49a2-83bc-2707b0f37ce7",
                             Description = "Test DE declaration 1",
                             JurisdictionCode = "DE",
                             NetMass = 50m
                         },
                         new
                         {
-                            Id = new Guid("e5991c07-649c-48f6-a218-1673fb3b0159"),
-                            CreationDate = new DateTime(2023, 4, 21, 6, 58, 51, 393, DateTimeKind.Utc).AddTicks(8253),
-                            DeclarantId = "ddac18d6-c588-4987-910c-2987885871f5",
+                            Id = "75ce3ab6-8e52-4216-9c7d-ab350da87fbd",
+                            CreationDate = new DateTime(2023, 4, 28, 21, 23, 22, 64, DateTimeKind.Utc).AddTicks(2522),
+                            DeclarantId = "1e2f4b95-db12-4f0e-a5ec-369458b14e5d",
                             Description = "Test GB declaration 2",
                             JurisdictionCode = "GB",
                             NetMass = 90m
                         },
                         new
                         {
-                            Id = new Guid("da8b5ed7-e6e9-47c8-9072-d14e4871475a"),
-                            CreationDate = new DateTime(2023, 4, 22, 6, 58, 51, 393, DateTimeKind.Utc).AddTicks(8376),
-                            DeclarantId = "ddac18d6-c588-4987-910c-2987885871f5",
+                            Id = "c1e70986-448a-4879-8cec-2e0625613f4b",
+                            CreationDate = new DateTime(2023, 4, 29, 21, 23, 22, 64, DateTimeKind.Utc).AddTicks(2526),
+                            DeclarantId = "1e2f4b95-db12-4f0e-a5ec-369458b14e5d",
                             Description = "Test BE declaration 2",
                             JurisdictionCode = "BE",
                             NetMass = 70m
                         },
                         new
                         {
-                            Id = new Guid("4408e0c5-ace9-4997-b2b1-5fdd8b3f2a6d"),
-                            CreationDate = new DateTime(2023, 4, 22, 18, 58, 51, 393, DateTimeKind.Utc).AddTicks(8383),
-                            DeclarantId = "ddac18d6-c588-4987-910c-2987885871f5",
+                            Id = "ee1254a7-fbaa-427c-915d-97dcbce198c0",
+                            CreationDate = new DateTime(2023, 4, 30, 9, 23, 22, 64, DateTimeKind.Utc).AddTicks(2531),
+                            DeclarantId = "1e2f4b95-db12-4f0e-a5ec-369458b14e5d",
                             Description = "Test DE declaration 2",
                             JurisdictionCode = "DE",
                             NetMass = 40m
@@ -375,32 +375,32 @@ namespace SignalRDemo.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "27241cdd-e16b-4755-bb51-fd3561273c46",
+                            Id = "76ca7449-97ce-49a2-83bc-2707b0f37ce7",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f538b547-7379-4008-9eaf-fcf4a2f8c712",
+                            ConcurrencyStamp = "4ac549a5-a92f-4c56-9b15-7a15b11d487b",
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAED+PWgXpTB3fczGEFMc8PZ3Nn/Yh7ZcuY5Z2HYN5PL1McZJLY0P+iB5VUPOZ82zlbw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAfF7MimJiiuKRkAA9AcYe7/Bgvw/9mwIX1zjkXGzVV+eYrolyz0JVcxYhBIO0sO1g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "50b1279f-aaaf-45ae-8420-291025a93021",
+                            SecurityStamp = "ed9bdd11-68dc-4299-afb7-75b45e9986e0",
                             TwoFactorEnabled = false
                         },
                         new
                         {
-                            Id = "ddac18d6-c588-4987-910c-2987885871f5",
+                            Id = "1e2f4b95-db12-4f0e-a5ec-369458b14e5d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "68f136c5-cd51-429a-860f-c567ba8a6390",
+                            ConcurrencyStamp = "3f2e74c0-1fe6-4e75-a5bf-ba39de6e13a2",
                             Email = "user@localhost.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@LOCALHOST.COM",
                             NormalizedUserName = "USER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHloJAcjpcRBtbgok+GHRFJWn4KFrYunp8gNG3OuQhoEqh1RRINzhVIKH63VPDAzaQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG62zFvxQxYBwCcTkbSc3sVlkvrPlLDsdefLdp2HWPk7P4V0cJzX4IlqVpwFdMsPww==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2024f74e-57c8-4ee5-8695-6897e34a151e",
+                            SecurityStamp = "276a6fd5-622c-4dd6-b692-b96919e73be2",
                             TwoFactorEnabled = false
                         });
                 });
@@ -423,47 +423,47 @@ namespace SignalRDemo.Server.Migrations
                         new
                         {
                             JurisdictionCode = "GB",
-                            UserId = "27241cdd-e16b-4755-bb51-fd3561273c46"
+                            UserId = "76ca7449-97ce-49a2-83bc-2707b0f37ce7"
                         },
                         new
                         {
                             JurisdictionCode = "BE",
-                            UserId = "27241cdd-e16b-4755-bb51-fd3561273c46"
+                            UserId = "76ca7449-97ce-49a2-83bc-2707b0f37ce7"
                         },
                         new
                         {
                             JurisdictionCode = "DE",
-                            UserId = "27241cdd-e16b-4755-bb51-fd3561273c46"
+                            UserId = "76ca7449-97ce-49a2-83bc-2707b0f37ce7"
                         },
                         new
                         {
                             JurisdictionCode = "IE",
-                            UserId = "27241cdd-e16b-4755-bb51-fd3561273c46"
+                            UserId = "76ca7449-97ce-49a2-83bc-2707b0f37ce7"
                         },
                         new
                         {
                             JurisdictionCode = "NL",
-                            UserId = "27241cdd-e16b-4755-bb51-fd3561273c46"
+                            UserId = "76ca7449-97ce-49a2-83bc-2707b0f37ce7"
                         },
                         new
                         {
                             JurisdictionCode = "PL",
-                            UserId = "27241cdd-e16b-4755-bb51-fd3561273c46"
+                            UserId = "76ca7449-97ce-49a2-83bc-2707b0f37ce7"
                         },
                         new
                         {
                             JurisdictionCode = "GB",
-                            UserId = "ddac18d6-c588-4987-910c-2987885871f5"
+                            UserId = "1e2f4b95-db12-4f0e-a5ec-369458b14e5d"
                         },
                         new
                         {
                             JurisdictionCode = "BE",
-                            UserId = "ddac18d6-c588-4987-910c-2987885871f5"
+                            UserId = "1e2f4b95-db12-4f0e-a5ec-369458b14e5d"
                         },
                         new
                         {
                             JurisdictionCode = "DE",
-                            UserId = "ddac18d6-c588-4987-910c-2987885871f5"
+                            UserId = "1e2f4b95-db12-4f0e-a5ec-369458b14e5d"
                         });
                 });
 

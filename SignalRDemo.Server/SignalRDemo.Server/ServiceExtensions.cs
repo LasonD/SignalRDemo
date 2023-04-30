@@ -46,15 +46,31 @@ public static class ServiceCollectionExtensions
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters()
+            .AddJwtBearer(options =>
             {
-                ValidateIssuer = true,
-                ValidIssuer = issuer,
-                ValidateAudience = true,
-                ValidAudience = audience,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = issuer,
+                    ValidateAudience = true,
+                    ValidAudience = audience,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        if (!accessToken.IsNullOrEmpty())
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         services.AddAuthorization(options =>
@@ -71,7 +87,8 @@ public static class ServiceCollectionExtensions
                 .WithOrigins(config["AllowedOrigin"]!)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-            );
+                .AllowCredentials()
+            ); 
         });
         services.AddEndpointsApiExplorer();
 

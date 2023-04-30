@@ -53,16 +53,16 @@ public static class UpdateDeclaration
             _notificationsService = notificationsService;
         }
 
-        public async Task<DeclarationDto> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<DeclarationDto> Handle(Command command, CancellationToken cancellationToken)
         {
-            var declaration = await _dbContext.Declarations.FindAsync(request.Id, cancellationToken);
+            var declaration = await _dbContext.Declarations.FindAsync(command.Id, cancellationToken);
 
             if (declaration == null)
             {
-                throw new NotFoundException(request.Id, nameof(Declaration));
+                throw new NotFoundException(command.Id, nameof(Declaration));
             }
 
-            _mapper.Map(request, declaration);
+            _mapper.Map(command, declaration);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

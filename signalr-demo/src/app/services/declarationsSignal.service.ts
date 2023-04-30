@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
+import { HttpTransportType } from '@microsoft/signalr';
 import { environment } from "../../environments/environment";
 import { Declaration } from "../models/declaration.model";
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { NotificationService } from "./notifications.service";
+import { AuthService } from "../auth/services/auth.service";
+import { filter, map } from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeclarationsSignalService {
   private hubConnection: signalR.HubConnection;
+  private token$ = new BehaviorSubject<string>(null!);
 
   declarationEditToggled$ = new Subject<string>();
   declarationEditCancelled$ = new Subject<string>();
@@ -20,9 +24,20 @@ export class DeclarationsSignalService {
   userConnected$ = new Subject<string>();
   userDisconnected$ = new Subject<string>();
 
-  constructor(private notificationsService: NotificationService) {
+  constructor(private notificationsService: NotificationService,
+              private authService: AuthService) {
+    this.authService.user$.pipe(
+      filter(data => !!data?.user?.token),
+      map(data => data.user.token!)
+    ).subscribe((token: string) => this.token$.next(token));
+
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${environment.apiBaseUrl}/hubs/declarations`)
+      .withUrl(`${environment.apiBaseUrl}/hubs/declarations`, {
+        withCredentials: true,
+        accessTokenFactory: () => `${this.token$.getValue()}`,
+        transport: HttpTransportType.WebSockets
+      })
+      .withAutomaticReconnect()
       .build();
 
     this.hubConnection.start()
