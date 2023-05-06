@@ -19,14 +19,14 @@ public static class GetDeclarations
     public class Handler : IRequestHandler<Query, IEnumerable<DeclarationDto>>
     {
         private readonly IMapper _mapper;
-        private readonly IDeclarationsCacheManager _declarationsCacheManager;
+        private readonly IDeclarationsLockManager _declarationsLockManager;
         private readonly DeclarationsDbContext _dbContext;
 
-        public Handler(IMapper mapper, DeclarationsDbContext dbContext, IDeclarationsCacheManager declarationsDeclarationsCacheManager)
+        public Handler(IMapper mapper, DeclarationsDbContext dbContext, IDeclarationsLockManager declarationsDeclarationsLockManager)
         {
             _mapper = mapper;
             _dbContext = dbContext;
-            _declarationsCacheManager = declarationsDeclarationsCacheManager;
+            _declarationsLockManager = declarationsDeclarationsLockManager;
         }
 
         public async Task<IEnumerable<DeclarationDto>> Handle(Query query, CancellationToken cancellationToken)
@@ -52,7 +52,7 @@ public static class GetDeclarations
 
             foreach (var dto in result)
             {
-                dto.IsLocked = _declarationsCacheManager.IsLocked(dto.Id);
+                dto.IsLocked = _declarationsLockManager.IsLocked(dto.Id);
             }
 
             return result;

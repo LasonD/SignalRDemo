@@ -26,18 +26,18 @@ public interface IDeclarationsHub
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class DeclarationsHub : Hub<IDeclarationsHub>
 {
-    private readonly IDeclarationsCacheManager _declarationsCacheManager;
+    private readonly IDeclarationsLockManager _declarationsLockManager;
     private readonly DeclarationsDbContext _dbContext;
 
-    public DeclarationsHub(DeclarationsDbContext dbContext, IDeclarationsCacheManager declarationsCacheManager)
+    public DeclarationsHub(DeclarationsDbContext dbContext, IDeclarationsLockManager declarationsLockManager)
     {
         _dbContext = dbContext;
-        _declarationsCacheManager = declarationsCacheManager;
+        _declarationsLockManager = declarationsLockManager;
     }
 
     public async Task DeclarationEditToggled(string declarationId)
     {
-        _declarationsCacheManager.Lock(declarationId, UserId);
+        _declarationsLockManager.Lock(declarationId, UserId);
 
         var jurisdiction = await GetDeclarationJurisdictionAsync(declarationId);
 
@@ -48,7 +48,7 @@ public class DeclarationsHub : Hub<IDeclarationsHub>
 
     public async Task DeclarationEditCancelled(string declarationId)
     {
-        _declarationsCacheManager.Unlock(declarationId);
+        _declarationsLockManager.Unlock(declarationId);
 
         var jurisdiction = await GetDeclarationJurisdictionAsync(declarationId);
 

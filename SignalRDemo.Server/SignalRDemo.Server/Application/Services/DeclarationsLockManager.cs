@@ -1,6 +1,8 @@
+using Microsoft.IdentityModel.Tokens;
+
 namespace SignalRDemo.Server.Application.Services;
 
-public interface IDeclarationsCacheManager
+public interface IDeclarationsLockManager
 {
     bool IsLocked(string declarationId);
     bool IsLockedByOtherUser(string declarationId, string currentUserId);
@@ -9,24 +11,26 @@ public interface IDeclarationsCacheManager
     void UnlockAllLockedBy(string userId);
 }
 
-public class DeclarationsLockManager : IDeclarationsCacheManager
+public class DeclarationsLockManager : IDeclarationsLockManager
 {
-    private readonly ICache<string> _declarationLockCache;
+    private readonly ICache<List<string>> _declarationLockCache;
     private readonly object _lock = new();
 
-    public DeclarationsLockManager(ICache<string> declarationLockCache)
+    public DeclarationsLockManager(ICache<List<string>> declarationLockCache)
     {
         _declarationLockCache = declarationLockCache;
     }
 
     public bool IsLocked(string declarationId)
     {
-        return _declarationLockCache.TryGetValue(declarationId, out _);
+        // ReSharper disable once InconsistentlySynchronizedField
+        return _declarationLockCache.TryGetValue(declarationId, out var users) && !users.IsNullOrEmpty();
     }
 
     public bool IsLockedByOtherUser(string declarationId, string currentUserId)
     {
-        return _declarationLockCache.TryGetValue(declarationId, out var user) && user == currentUserId;
+        // ReSharper disable once InconsistentlySynchronizedField
+        return _declarationLockCache.TryGetValue(declarationId, out var users) && (!users?.Contains(currentUserId) ?? false);
     }
 
     public void Lock(string declarationId, string userId)
@@ -38,17 +42,15 @@ public class DeclarationsLockManager : IDeclarationsCacheManager
                 throw new InvalidOperationException($"The declaration {declarationId} is already locked by another user.");
             }
 
-            _declarationLockCache.Set(declarationId, userId);
+            _declarationLockCache.Set(declarationId, new List<string> { userId });
         }
     }
 
     public void Unlock(string declarationId)
     {
-        _declarationLockCache.Set(declarationId, null);
-    }
-
-    public void UnlockAllLockedBy(string userId)
-    {
-        _
+        lock (_lock)
+        {
+            _declarationLockCache.Remove(declarationId);
+        }
     }
 }

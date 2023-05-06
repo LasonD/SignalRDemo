@@ -24,7 +24,7 @@ public static class UpdateDeclaration
 
     public class Validator : AbstractValidator<Command>
     {
-        public Validator(DeclarationsDbContext dbContext, IHttpContextAccessor httpContextAccessor, IDeclarationsCacheManager declarationsCacheManager)
+        public Validator(DeclarationsDbContext dbContext, IHttpContextAccessor httpContextAccessor, IDeclarationsLockManager declarationsLockManager)
         {
             var user = httpContextAccessor.HttpContext?.User;
             var userId = user?.GetUserId()!;
@@ -47,7 +47,7 @@ public static class UpdateDeclaration
                 .WithMessage("Declaration should have a positive NetMass.");
 
             RuleFor(x => x.Id)
-                .Must(x => !declarationsCacheManager.IsLockedByOtherUser(x, userId))
+                .Must(x => !declarationsLockManager.IsLockedByOtherUser(x, userId))
                 .WithMessage(_ => "Declaration is already in use by another user.");
         }
     }
@@ -57,14 +57,14 @@ public static class UpdateDeclaration
         private readonly IMapper _mapper;
         private readonly DeclarationsDbContext _dbContext;
         private readonly INotificationsService _notificationsService;
-        private readonly IDeclarationsCacheManager _declarationsCacheManager;
+        private readonly IDeclarationsLockManager _declarationsLockManager;
 
-        public Handler(IMapper mapper, DeclarationsDbContext dbContext, INotificationsService notificationsService, IDeclarationsCacheManager declarationsCacheManager)
+        public Handler(IMapper mapper, DeclarationsDbContext dbContext, INotificationsService notificationsService, IDeclarationsLockManager declarationsLockManager)
         {
             _mapper = mapper;
             _dbContext = dbContext;
             _notificationsService = notificationsService;
-            _declarationsCacheManager = declarationsCacheManager;
+            _declarationsLockManager = declarationsLockManager;
         }
 
         public async Task<DeclarationDto> Handle(Command command, CancellationToken cancellationToken)
@@ -76,7 +76,7 @@ public static class UpdateDeclaration
                 throw new NotFoundException(command.Id, nameof(Declaration));
             }
 
-            _declarationsCacheManager.Lock(command.Id, command.UserId);
+            _declarationsLockManager.Lock(command.Id, command.UserId);
 
             try
             {
@@ -94,7 +94,7 @@ public static class UpdateDeclaration
             }
             finally
             {
-                _declarationsCacheManager.Unlock(command.Id);
+                _declarationsLockManager.Unlock(command.Id);
             }
         }
     }
