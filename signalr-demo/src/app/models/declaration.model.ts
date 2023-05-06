@@ -10,3 +10,8 @@ export interface Declaration {
   declarantId: string;
   isLocked: boolean;
 }
+
+export interface DeclarationChange {
+  id: string,
+  changes: { [key: string]: any };
+}

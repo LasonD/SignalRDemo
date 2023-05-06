@@ -1,6 +1,6 @@
-import { Component, Input, Output } from '@angular/core';
-import { Declaration } from "../../models/declaration.model";
-import { Subject } from "rxjs";
+import { Component, Input, OnDestroy, Output } from '@angular/core';
+import { Declaration, DeclarationChange } from "../../models/declaration.model";
+import { distinctUntilChanged, Observable, Subject, takeUntil } from "rxjs";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 
 @Component({
@@ -8,16 +8,21 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
   templateUrl: './declaration.component.html',
   styleUrls: ['./declaration.component.scss'],
 })
-export class DeclarationComponent {
+export class DeclarationComponent implements OnDestroy {
+  destroyed$: Subject<boolean> = new Subject<boolean>();
+
   @Input() declaration!: Declaration;
   @Input() jurisdictions!: string[];
   @Input() isLocked: boolean = false;
   @Input() editMode: boolean = false;
+  @Input() declarationChangesInput$!: Observable<DeclarationChange>;
 
   @Output() delete: Subject<Declaration> = new Subject<Declaration>();
   @Output() save: Subject<Declaration> = new Subject<Declaration>();
   @Output() toggleEdit: Subject<Declaration> = new Subject<Declaration>();
   @Output() cancelEdit: Subject<Declaration> = new Subject<Declaration>();
+
+  @Output() declarationChangesOutput: Subject<DeclarationChange> = new Subject<DeclarationChange>();
 
   declarationForm: FormGroup = null!;
 
@@ -28,6 +33,39 @@ export class DeclarationComponent {
       netMass: new FormControl(this.declaration.netMass, Validators.min(0)),
       declarantEmail: new FormControl(this.declaration.declarantEmail, [Validators.required, Validators.email])
     });
+
+    const keys = ['jurisdiction', 'description', 'netMass'];
+
+    for (const key of keys) {
+      this.declarationForm.get(key)!.valueChanges
+        .pipe(
+          takeUntil(this.destroyed$),
+          distinctUntilChanged(),
+        )
+        .subscribe((value) => {
+          const change = {
+            id: this.declaration.id, changes: {
+              [key]: value
+            }
+          };
+          this.declarationChangesOutput.next(change);
+        });
+
+      this.declarationChangesInput$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((change) => {
+          if (!this.isLocked || !change || !change.id || change.id !== this.declaration.id || !change.changes) return;
+
+          const changes = change.changes;
+
+          for (const key of Object.keys(changes)) {
+            const control = this.declarationForm.get(key);
+            if (!control) return;
+            const newValue = changes[key];
+            control.setValue(newValue);
+          }
+        });
+    }
   }
 
   toggleEditMode(): void {
@@ -80,5 +118,9 @@ export class DeclarationComponent {
       return `rgba(${r}, ${g}, ${b}, ${opacity})`;
     }
     return color;
+  }
+
+  public ngOnDestroy() {
+    this.destroyed$.next(true);
   }
 }

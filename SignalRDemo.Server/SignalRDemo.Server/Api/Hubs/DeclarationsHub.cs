@@ -14,6 +14,7 @@ public interface IDeclarationsHub
 {
     Task DeclarationCreated(DeclarationDto declaration);
     Task DeclarationUpdated(DeclarationDto declaration);
+    Task DeclarationEditChange(DeclarationChange change);
     Task DeclarationDeleted(string declarationId);
 
     Task DeclarationEditToggled(string declarationId);
@@ -55,6 +56,13 @@ public class DeclarationsHub : Hub<IDeclarationsHub>
         var groupName = HubHelper.GetGroupNameForJurisdiction(jurisdiction);
 
         await Clients.OthersInGroup(groupName).DeclarationEditCancelled(declarationId);
+    }
+
+    public async Task DeclarationChanged(DeclarationChange change)
+    {
+        //  TODO: add checks
+
+        await Clients.All.DeclarationEditChange(change);
     }
 
     public override async Task OnConnectedAsync()

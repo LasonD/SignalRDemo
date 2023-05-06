@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Declaration } from "../models/declaration.model";
+import { Declaration, DeclarationChange } from "../models/declaration.model";
 import { DeclarationsService } from "../services/declarations.service";
 import { JurisdictionsService } from "../services/jurisdictions.service";
 import { Observable, Subject, takeUntil } from "rxjs";
@@ -18,6 +18,7 @@ export class DeclarationsListComponent implements OnDestroy {
   declarations: Declaration[] = [];
 
   jurisdictionCodes$!: Observable<string[]>;
+  declarationEditChanges$!: Observable<DeclarationChange>;
 
   constructor(private declarationsService: DeclarationsService,
               private jurisdictionService: JurisdictionsService,
@@ -82,6 +83,9 @@ export class DeclarationsListComponent implements OnDestroy {
         });
       });
 
+    this.declarationEditChanges$ = this.declarationSignalService.declarationEditChange$
+      .pipe(takeUntil(this.destroyed$));
+
     this.declarationSignalService.declarationEditCancelled$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((declarationId: string) => {
@@ -136,6 +140,10 @@ export class DeclarationsListComponent implements OnDestroy {
 
   onCancelEdit(declaration: Declaration) {
     this.declarationSignalService.declarationEditCancelled(declaration.id);
+  }
+
+  onDeclarationChanges(change: DeclarationChange) {
+    this.declarationSignalService.declarationChanged(change);
   }
 
   ngOnDestroy(): void {

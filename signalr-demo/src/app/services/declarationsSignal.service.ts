@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { HttpTransportType } from '@microsoft/signalr';
 import { environment } from "../../environments/environment";
-import { Declaration } from "../models/declaration.model";
+import { Declaration, DeclarationChange } from "../models/declaration.model";
 import { BehaviorSubject, Subject } from "rxjs";
 import { NotificationService } from "./notifications.service";
 import { AuthService } from "../auth/services/auth.service";
@@ -18,6 +18,7 @@ export class DeclarationsSignalService {
   declarationEditToggled$ = new Subject<string>();
   declarationEditCancelled$ = new Subject<string>();
   declarationUpdated$ = new Subject<Declaration>();
+  declarationEditChange$ = new Subject<DeclarationChange>();
   declarationDeleted$ = new Subject<string>();
   declarationCreated$ = new Subject<Declaration>();
 
@@ -71,6 +72,10 @@ export class DeclarationsSignalService {
     this.hubConnection.on('userDisconnected', (email: string) => {
       this.userDisconnected$.next(email);
     });
+
+    this.hubConnection.on('declarationEditChange', (change: DeclarationChange) => {
+      this.declarationEditChange$.next(change);
+    });
   }
 
   declarationEditToggled(id: string) {
@@ -80,6 +85,11 @@ export class DeclarationsSignalService {
 
   declarationEditCancelled(id: string) {
     this.hubConnection.invoke('declarationEditCancelled', id)
+      .catch((err) => this.notificationsService.showError(err));
+  }
+
+  declarationChanged(change: DeclarationChange) {
+    this.hubConnection.invoke('declarationChanged', change)
       .catch((err) => this.notificationsService.showError(err));
   }
 }
