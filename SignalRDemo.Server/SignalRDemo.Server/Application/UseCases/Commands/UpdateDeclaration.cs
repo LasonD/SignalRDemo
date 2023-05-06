@@ -69,7 +69,9 @@ public static class UpdateDeclaration
 
         public async Task<DeclarationDto> Handle(Command command, CancellationToken cancellationToken)
         {
-            var declaration = await _dbContext.Declarations.FindAsync(command.Id, cancellationToken);
+            var declaration = await _dbContext.Declarations
+                .Include(d => d.Jurisdiction)
+                .FirstOrDefaultAsync(d => d.Id == command.Id, cancellationToken);
 
             if (declaration == null)
             {

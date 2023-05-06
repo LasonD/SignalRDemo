@@ -53,4 +53,9 @@ public class DeclarationsLockManager : IDeclarationsLockManager
             _declarationLockCache.Remove(declarationId);
         }
     }
+
+    public void UnlockAllLockedBy(string userId)
+    {
+        throw new NotImplementedException();
+    }
 }
