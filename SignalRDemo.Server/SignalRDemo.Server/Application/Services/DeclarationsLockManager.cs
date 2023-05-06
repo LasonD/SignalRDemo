@@ -1,5 +1,3 @@
-using Microsoft.IdentityModel.Tokens;
-
 namespace SignalRDemo.Server.Application.Services;
 
 public interface IDeclarationsLockManager
@@ -8,29 +6,37 @@ public interface IDeclarationsLockManager
     bool IsLockedByOtherUser(string declarationId, string currentUserId);
     void Lock(string declarationId, string userId);
     void Unlock(string declarationId);
-    void UnlockAllLockedBy(string userId);
+    IEnumerable<string> UnlockAllLockedBy(string userId);
 }
 
 public class DeclarationsLockManager : IDeclarationsLockManager
 {
-    private readonly ICache<List<string>> _declarationLockCache;
+    private readonly ICache<string, List<string>> _userToLockedDeclarationsCache;
+    private readonly ICache<string, string> _declarationToUserCache;
     private readonly object _lock = new();
 
-    public DeclarationsLockManager(ICache<List<string>> declarationLockCache)
+    public DeclarationsLockManager(
+        ICache<string, List<string>> userToLockedDeclarationsCache,
+        ICache<string, string> declarationToUserCache
+    )
     {
-        _declarationLockCache = declarationLockCache;
+        _userToLockedDeclarationsCache = userToLockedDeclarationsCache;
+        _declarationToUserCache = declarationToUserCache;
     }
 
     public bool IsLocked(string declarationId)
     {
         // ReSharper disable once InconsistentlySynchronizedField
-        return _declarationLockCache.TryGetValue(declarationId, out var users) && !users.IsNullOrEmpty();
+        return _declarationToUserCache.TryGetValue(declarationId, out var userId) &&
+               !string.IsNullOrWhiteSpace(userId);
     }
 
     public bool IsLockedByOtherUser(string declarationId, string currentUserId)
     {
         // ReSharper disable once InconsistentlySynchronizedField
-        return _declarationLockCache.TryGetValue(declarationId, out var users) && (!users?.Contains(currentUserId) ?? false);
+        return _declarationToUserCache.TryGetValue(declarationId, out var userId) && 
+               !string.IsNullOrWhiteSpace(userId) &&
+               userId != currentUserId;
     }
 
     public void Lock(string declarationId, string userId)
@@ -42,7 +48,16 @@ public class DeclarationsLockManager : IDeclarationsLockManager
                 throw new InvalidOperationException($"The declaration {declarationId} is already locked by another user.");
             }
 
-            _declarationLockCache.Set(declarationId, new List<string> { userId });
+            var isInCache = _userToLockedDeclarationsCache.TryGetValue(userId, out var declarations);
+            declarations ??= new List<string>();
+            declarations.Add(declarationId);
+
+            if (!isInCache)
+            {
+                _userToLockedDeclarationsCache.Set(userId, declarations);
+            }
+
+            _declarationToUserCache.Set(declarationId, userId);
         }
     }
 
@@ -50,12 +65,33 @@ public class DeclarationsLockManager : IDeclarationsLockManager
     {
         lock (_lock)
         {
-            _declarationLockCache.Remove(declarationId);
+            if (_declarationToUserCache.TryGetValue(declarationId, out var userId))
+            {
+                _declarationToUserCache.Remove(declarationId);
+            }
+
+            if (userId != null && _userToLockedDeclarationsCache.TryGetValue(userId, out var declarations))
+            {
+                declarations?.Remove(declarationId);
+            }
         }
     }
 
-    public void UnlockAllLockedBy(string userId)
+    public IEnumerable<string> UnlockAllLockedBy(string userId)
     {
-        throw new NotImplementedException();
+        lock (_lock)
+        {
+            if (!_userToLockedDeclarationsCache.TryGetValue(userId, out var declarations) || declarations == null)
+            {
+                return Array.Empty<string>();
+            }
+
+            foreach (var declaration in declarations)
+            {
+                _declarationToUserCache.Remove(declaration);
+            }
+
+            return declarations;
+        }
     }
 }

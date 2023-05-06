@@ -86,9 +86,16 @@ public class DeclarationsHub : Hub<IDeclarationsHub>
         await Task.WhenAll(userJurisdictions.Select(async j =>
         {
             var groupName = HubHelper.GetGroupNameForJurisdiction(j);
-            await Groups.AddToGroupAsync(connectionId, groupName);
+            await Groups.RemoveFromGroupAsync(connectionId, groupName);
             await Clients.GroupExcept(groupName, new[] { connectionId }).UserDisconnected(email);
         }));
+
+        var releasedDeclarations = _declarationsLockManager.UnlockAllLockedBy(UserId);
+
+        foreach (var releasedDeclarationId in releasedDeclarations)
+        {
+            await Clients.All.DeclarationEditCancelled(releasedDeclarationId);
+        }
 
         await base.OnDisconnectedAsync(exception);
     }

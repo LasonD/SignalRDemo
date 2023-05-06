@@ -62,7 +62,7 @@ public static class DeleteDeclaration
                 throw new BusinessException($"The user {command.UserId} is not eligible to delete declarations for {declaration.JurisdictionCode} jurisdiction");
             }
 
-            var removedDeclaration = _dbContext.Declarations.Remove(declaration);
+            var removedDeclaration = _dbContext.Declarations.Remove(declaration).Entity;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

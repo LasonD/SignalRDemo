@@ -2,28 +2,28 @@ using System.Collections.Concurrent;
 
 namespace SignalRDemo.Server.Application.Services;
 
-public interface ICache<TValue>
+public interface ICache<in TKey, TValue>
 {
-    bool TryGetValue(string key, out TValue? value);
-    void Set(string key, TValue? value);
-    TValue? Remove(string key);
+    bool TryGetValue(TKey key, out TValue? value);
+    void Set(TKey key, TValue? value);
+    TValue? Remove(TKey key);
 }
 
-public class InMemoryCache<TValue> : ICache<TValue>
+public class InMemoryCache<TKey, TValue> : ICache<TKey, TValue> where TKey : notnull
 {
-    private static readonly ConcurrentDictionary<string, TValue> Cache = new();
+    private static readonly ConcurrentDictionary<TKey, TValue> Cache = new();
 
-    public bool TryGetValue(string key, out TValue? value)
+    public bool TryGetValue(TKey key, out TValue? value)
     {
         return Cache.TryGetValue(key, out value);
     }
 
-    public void Set(string key, TValue? value)
+    public void Set(TKey key, TValue? value)
     {
         Cache.AddOrUpdate(key, _ => value!, (_, _) => value!);
     }
 
-    public TValue? Remove(string key)
+    public TValue? Remove(TKey key)
     {
         Cache.Remove(key, out var value);
         return value;
