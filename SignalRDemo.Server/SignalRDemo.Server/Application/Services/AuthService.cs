@@ -21,6 +21,7 @@ public interface IAuthService
 public class AuthService : IAuthService
 {
     private const int MsInSec = 1000;
+    private const int SecInMinute = 60;
     private readonly IConfiguration _config;
     private readonly UserManager<User> _userManager;
     private readonly DeclarationsDbContext _dbContext;
@@ -99,7 +100,7 @@ public class AuthService : IAuthService
         var tokenStr = GenerateToken(tokenClaims);
 
         var tokenDurationMinutes = _config.GetTokenDurationMinutes();
-        var durationMs = tokenDurationMinutes * MsInSec;
+        var durationMs = tokenDurationMinutes * MsInSec * SecInMinute;
 
         var authResult = new AuthResult()
         {
