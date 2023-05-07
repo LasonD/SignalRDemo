@@ -62,6 +62,7 @@ export class DeclarationsSignalService {
     });
 
     this.hubConnection.on('declarationUpdated', (declaration: Declaration) => {
+      console.log('Updated declaration: ', declaration);
       this.declarationUpdated$.next(declaration);
     });
 

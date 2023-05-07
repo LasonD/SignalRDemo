@@ -31,7 +31,6 @@ export class DeclarationComponent implements OnDestroy {
       jurisdiction: new FormControl(this.declaration.jurisdiction, Validators.required),
       description: new FormControl(this.declaration.description),
       netMass: new FormControl(this.declaration.netMass, Validators.min(0)),
-      declarantEmail: new FormControl(this.declaration.declarantEmail, [Validators.required, Validators.email])
     });
 
     const keys = ['jurisdiction', 'description', 'netMass'];
@@ -82,11 +81,12 @@ export class DeclarationComponent implements OnDestroy {
   }
 
   saveChanges(): void {
-    this.toggleEditMode();
-
     if (!this.declarationForm.valid) {
+      alert('Form is not valid!');
       return;
     }
+
+    this.toggleEditMode();
 
     const editedDeclaration: Declaration = {...this.declaration, ...this.declarationForm.value};
     this.save.next(editedDeclaration);

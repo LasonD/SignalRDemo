@@ -69,9 +69,7 @@ public static class UpdateDeclaration
 
         public async Task<DeclarationDto> Handle(Command command, CancellationToken cancellationToken)
         {
-            var declaration = await _dbContext.Declarations
-                .Include(d => d.Jurisdiction)
-                .FirstOrDefaultAsync(d => d.Id == command.Id, cancellationToken);
+            var declaration = await FetchDeclarationCompleteAsync(command.Id, cancellationToken);
 
             if (declaration == null)
             {
@@ -88,7 +86,9 @@ public static class UpdateDeclaration
 
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
-                var dto = _mapper.Map<DeclarationDto>(declaration);
+                var updatedDeclaration = await FetchDeclarationCompleteAsync(command.Id, cancellationToken);
+
+                var dto = _mapper.Map<DeclarationDto>(updatedDeclaration);
 
                 await _notificationsService.NotifyDeclarationUpdatedAsync(dto, cancellationToken);
 
@@ -98,6 +98,14 @@ public static class UpdateDeclaration
             {
                 _declarationsLockManager.Unlock(command.Id);
             }
+        }
+
+        private Task<Declaration?> FetchDeclarationCompleteAsync(string id, CancellationToken cancellationToken)
+        {
+            return _dbContext.Declarations
+                .Include(d => d.Jurisdiction)
+                .Include(d => d.Declarant)
+                .FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
         }
     }
 }
