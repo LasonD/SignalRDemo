@@ -1,23 +1,45 @@
 <div class="d-flex justify-content-center">
-  <div class="card">
+  <div class="card mx-2">
     <div class="card-body">
       <h5 class="card-title">Create demo declarations</h5>
-      <form [formGroup]="form" class="needs-validation" novalidate>
+      <form [formGroup]="createDemoDeclarationsForm" class="needs-validation" novalidate>
         <div class="mb-3">
-          <label for="count" class="form-label">Count:</label>
-          <input type="number" id="count" class="form-control" formControlName="count" required>
+          <label for="createCount" class="form-label">Count:</label>
+          <input type="number" id="createCount" class="form-control" formControlName="createCount" required>
           <div class="invalid-feedback">
             Count must be a positive integer.
           </div>
         </div>
         <div class="mb-3">
-          <label for="interval" class="form-label">Interval (ms):</label>
-          <input type="number" id="interval" class="form-control" formControlName="interval" required>
+          <label for="createInterval" class="form-label">Interval (ms):</label>
+          <input type="number" id="createInterval" class="form-control" formControlName="createInterval" required>
           <div class="invalid-feedback">
             Interval must be a positive integer.
           </div>
         </div>
-        <button type="submit" class="btn btn-primary" (click)="createDemoDeclarations()" [disabled]="form.invalid">Create</button>
+        <button type="submit" class="btn btn-primary" (click)="createDemoDeclarations()" [disabled]="createDemoDeclarationsForm.invalid">Start</button>
+      </form>
+    </div>
+  </div>
+  <div class="card mx-2">
+    <div class="card-body">
+      <h5 class="card-title">Delete demo declarations</h5>
+      <form [formGroup]="deleteDemoDeclarationsForm" class="needs-validation" novalidate>
+        <div class="mb-3">
+          <label for="deleteCount" class="form-label">Count:</label>
+          <input type="number" id="deleteCount" class="form-control" formControlName="deleteCount" required>
+          <div class="invalid-feedback">
+            Count must be a positive integer.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="deleteInterval" class="form-label">Interval (ms):</label>
+          <input type="number" id="deleteInterval" class="form-control" formControlName="deleteInterval" required>
+          <div class="invalid-feedback">
+            Interval must be a positive integer.
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" (click)="deleteDemoDeclarations()" [disabled]="createDemoDeclarationsForm.invalid">Start</button>
       </form>
     </div>
   </div>

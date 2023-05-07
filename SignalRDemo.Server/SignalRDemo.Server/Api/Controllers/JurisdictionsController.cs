@@ -29,12 +29,12 @@ public class JurisdictionsController : ClientControllerBase
         return Ok(result);
     }
 
-    [HttpPut("")]
-    public async Task<IActionResult> UpdateJurisdiction(string jurisdictionCode, UpdateJurisdictionDto updateJurisdiction, CancellationToken cancellationToken)
+    [HttpPut("{jurisdictionCode}")]
+    public async Task<IActionResult> UpdateJurisdiction(string jurisdictionCode, [FromBody] UpdateJurisdictionDto updateJurisdiction, CancellationToken cancellationToken)
     {
         var command = new UpdateJurisdiction.Command()
         {
-            Color = updateJurisdiction.Color,
+            DisplayColor = updateJurisdiction.DisplayColor,
             JurisdictionCode = jurisdictionCode,
         };
 

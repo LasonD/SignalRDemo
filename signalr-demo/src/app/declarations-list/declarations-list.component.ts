@@ -64,6 +64,12 @@ export class DeclarationsListComponent implements OnDestroy {
         this.notificationsService.showInfo(`A new declaration for ${createdDeclaration.jurisdiction} was declared by ${createdDeclaration.declarantEmail}`, 'Declaration created');
       });
 
+    this.realTimeUpdatesService.declarationDeleted$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((declarationId: string) => {
+        this.notificationsService.showWarning(`Declaration with id ${declarationId} was deleted.`, 'Declaration deleted');
+      });
+
     this.declarationEditChanges$ = this.realTimeUpdatesService.declarationEditChange$
       .pipe(takeUntil(this.destroyed$));
 

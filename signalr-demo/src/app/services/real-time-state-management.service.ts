@@ -3,6 +3,7 @@ import { Declaration } from "../models/declaration.model";
 import { DeclarationsService } from "./declarations.service";
 import { RealTimeUpdatesService } from "./real-time-updates.service";
 import { BehaviorSubject, Subject, tap } from "rxjs";
+import { Jurisdiction } from "../models/jurisdiction.model";
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +52,17 @@ export class RealTimeStateManagementService {
         this.declarations = this.declarations.map((d) => {
           if (d.id === declarationId) {
             d.isLocked = false;
+          }
+          return d;
+        });
+        this.declarations$.next(this.declarations);
+      });
+
+    this.updatesService.jurisdictionDisplayColorChanged$
+      .subscribe((changedJurisdiction: Jurisdiction) => {
+        this.declarations = this.declarations.map((d) => {
+          if (d.jurisdiction === changedJurisdiction?.code) {
+            d.displayColor = changedJurisdiction.displayColor;
           }
           return d;
         });

@@ -1,1 +1,26 @@
-<p>jurisdictions works!</p>
+<div class="card d-flex justify-content-center">
+  <div class="card-header">
+    Jurisdiction Selector
+  </div>
+  <div class="card-body">
+    <div class="row mt-3">
+      <div class="col">
+        <label for="jurisdictionSelect" class="form-label">Select Jurisdiction</label>
+        <select class="form-select" id="jurisdictionSelect" [(ngModel)]="selectedJurisdiction" (change)="onSelect(selectedJurisdiction!)">
+          <option *ngFor="let jurisdiction of jurisdictions$ | async" [ngValue]="jurisdiction">{{ jurisdiction.code }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="row mt-3" *ngIf="selectedJurisdiction">
+      <div class="col">
+        <label for="displayColorInput" class="form-label">Display Color</label>
+        <input [(colorPicker)]="newDisplayColor" id="displayColorInput" [style.background]="newDisplayColor" [value]="newDisplayColor" class="form-control" readonly>
+      </div>
+    </div>
+    <div class="row mt-3" *ngIf="selectedJurisdiction">
+      <div class="col">
+        <button class="btn btn-primary" (click)="onUpdateColor()">Update Color</button>
+      </div>
+    </div>
+  </div>
+</div>

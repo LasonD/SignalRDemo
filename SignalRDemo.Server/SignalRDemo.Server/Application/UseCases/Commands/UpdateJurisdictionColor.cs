@@ -15,7 +15,7 @@ public static class UpdateJurisdiction
     public class Command : IRequest<JurisdictionDto>
     {
         public string JurisdictionCode { get; set; } = null!;
-        public string Color { get; set; } = null!;
+        public string DisplayColor { get; set; } = null!;
     }
 
     public class Validator : AbstractValidator<Command>
@@ -24,7 +24,7 @@ public static class UpdateJurisdiction
         {
             var user = httpContextAccessor.HttpContext?.User;
 
-            RuleFor(x => x.Color)
+            RuleFor(x => x.DisplayColor)
                 .NotEmpty()
                 .WithMessage("Jurisdiction color should not be empty.");
 
@@ -61,7 +61,7 @@ public static class UpdateJurisdiction
                 throw new NotFoundException(command.JurisdictionCode, nameof(Jurisdiction));
             }
 
-            jurisdiction.DisplayColor = command.Color;
+            jurisdiction.DisplayColor = command.DisplayColor;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
