@@ -4,7 +4,7 @@ import { DeclarationsService } from "../services/declarations.service";
 import { JurisdictionsService } from "../services/jurisdictions.service";
 import { Observable, Subject, takeUntil } from "rxjs";
 import { filter, map } from "rxjs/operators";
-import { DeclarationsSignalService } from "../services/declarationsSignal.service";
+import { DeclarationsSignalService } from "../services/declarations-signal.service";
 import { NotificationService } from "../services/notifications.service";
 
 @Component({

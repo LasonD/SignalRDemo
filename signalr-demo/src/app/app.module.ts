@@ -13,6 +13,8 @@ import { AuthInterceptorService } from "./auth/services/auth-interceptor.service
 import { CreateDeclarationComponent } from './declarations-list/create-declaration/create-declaration.component';
 import { HeaderComponent } from './header/header.component';
 import { ToastrModule } from "ngx-toastr";
+import { StatisticsComponent } from './statistics/statistics.component';
+import { NgxChartsModule } from "@swimlane/ngx-charts";
 
 @NgModule({
   declarations: [
@@ -22,6 +24,7 @@ import { ToastrModule } from "ngx-toastr";
     AuthComponent,
     CreateDeclarationComponent,
     HeaderComponent,
+    StatisticsComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,7 +33,8 @@ import { ToastrModule } from "ngx-toastr";
     HttpClientModule,
     FormsModule,
     ToastrModule.forRoot(),
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxChartsModule,
   ],
   providers: [
     {

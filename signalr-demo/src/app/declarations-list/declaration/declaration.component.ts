@@ -2,6 +2,7 @@ import { Component, Input, OnDestroy, Output } from '@angular/core';
 import { Declaration, DeclarationChange } from "../../models/declaration.model";
 import { distinctUntilChanged, Observable, Subject, takeUntil } from "rxjs";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { DeclarationsColorService } from "../../services/declarations-color.service";
 
 @Component({
   selector: 'app-declaration',
@@ -25,6 +26,9 @@ export class DeclarationComponent implements OnDestroy {
   @Output() declarationChangesOutput: Subject<DeclarationChange> = new Subject<DeclarationChange>();
 
   declarationForm: FormGroup = null!;
+
+  constructor(private colorService: DeclarationsColorService) {
+  }
 
   ngOnInit() {
     this.declarationForm = new FormGroup({
@@ -96,31 +100,11 @@ export class DeclarationComponent implements OnDestroy {
     this.delete.next(this.declaration);
   }
 
-  getBackgroundColor(): string {
-    const color = this.declaration.displayColor;
-    const rgba = this.colorToRGBA(color, 0.2);
-    return rgba;
-  }
-
-  colorToRGBA(color: string, opacity: number): string {
-    const tempElement = document.createElement('div');
-    tempElement.style.backgroundColor = color;
-    document.body.appendChild(tempElement);
-    const style = getComputedStyle(tempElement);
-    const rgb = style.backgroundColor;
-    document.body.removeChild(tempElement);
-
-    const regex = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/.exec(rgb);
-    if (regex) {
-      const r = parseInt(regex[1]);
-      const g = parseInt(regex[2]);
-      const b = parseInt(regex[3]);
-      return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-    }
-    return color;
-  }
-
   public ngOnDestroy() {
     this.destroyed$.next(true);
+  }
+
+  getBackgroundColor(): string {
+    return this.colorService.getBackgroundColor(this.declaration?.displayColor);
   }
 }
