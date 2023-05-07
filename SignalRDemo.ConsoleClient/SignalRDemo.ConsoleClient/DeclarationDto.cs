@@ -1,4 +1,6 @@
-﻿namespace SignalRDemo.ConsoleClient;
+﻿using Newtonsoft.Json;
+
+namespace SignalRDemo.ConsoleClient;
 
 public class DeclarationDto
 {
@@ -15,16 +17,6 @@ public class DeclarationDto
 
     public override string ToString()
     {
-        var separator = new string('-', 80);
-        var header = $"{"ID",-20} {"Description",-20} {"Jurisdiction",-20} " +
-                     $"{"Display Color",-20} {"Net Mass",-20} {"Declarant Email",-20} " +
-                     $"{"Creation Date",-20} {"Last Updated Date",-20} {"Declarant ID",-20} " +
-                     $"{"Is Locked",-20}";
-        var data = $"{Id,-20} {Description,-20} {Jurisdiction,-20} " +
-                   $"{DisplayColor,-20} {NetMass,-20} {DeclarantEmail,-20} " +
-                   $"{CreationDate,-20} {LastUpdatedDate,-20} {DeclarantId,-20} " +
-                   $"{IsLocked,-20}";
-
-        return $"{separator}\n{header}\n{separator}\n{data}\n{separator}";
+        return JsonConvert.SerializeObject(this);
     }
 }
