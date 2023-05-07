@@ -16,8 +16,6 @@ export class RealTimeStateManagementService {
 
   constructor(private declarationsService: DeclarationsService,
               private updatesService: RealTimeUpdatesService) {
-    this.declarations$.pipe(tap(d => console.log('Declarations: ', d))).subscribe();
-
     this.updatesService.declarationCreated$
       .subscribe((createdDeclaration: Declaration) => {
         this.declarations = [createdDeclaration, ...this.declarations];
