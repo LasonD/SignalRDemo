@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using SignalRDemo.ConsoleClient;
 
@@ -10,7 +11,11 @@ Console.Write("Enter access token: ");
 var token = Console.ReadLine();
 
 var connection = new HubConnectionBuilder()
-    .WithUrl(configuration["HubUrl"]!, options => options.AccessTokenProvider = () => Task.FromResult(token))
+    .WithUrl(configuration["HubUrl"]!, options =>
+    {
+        options.AccessTokenProvider = () => Task.FromResult(token);
+        options.Transports = HttpTransportType.WebSockets | HttpTransportType.ServerSentEvents | HttpTransportType.LongPolling;
+    })
     .Build();
 
 connection.On<DeclarationDto>("DeclarationCreated", (declaration) =>
@@ -29,6 +34,12 @@ connection.On<string>("DeclarationDeleted", (declarationId) =>
     Console.WriteLine($"Declaration deleted: {declarationId}");
     Console.ResetColor();
 });
+
+connection.Closed += _ =>
+{
+    Console.WriteLine("Connection is closed.");
+    return Task.CompletedTask;
+};
 
 await connection.StartAsync();
 Console.ReadKey();
