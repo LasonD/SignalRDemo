@@ -2,23 +2,20 @@ import { Injectable } from '@angular/core';
 import { Declaration } from "../models/declaration.model";
 import { DeclarationsService } from "./declarations.service";
 import { RealTimeUpdatesService } from "./real-time-updates.service";
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject, tap } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RealTimeStateManagementService {
+  private isFetched: boolean = false;
   private declarations!: Declaration[];
 
-  public declarations$: Subject<Declaration[]> = new Subject<Declaration[]>();
+  public declarations$: Subject<Declaration[]> = new BehaviorSubject<Declaration[]>([]);
 
   constructor(private declarationsService: DeclarationsService,
               private updatesService: RealTimeUpdatesService) {
-
-    this.declarationsService.getDeclarations()
-      .subscribe((declarations) => {
-        this.declarations = declarations;
-      });
+    this.declarations$.pipe(tap(d => console.log('Declarations: ', d))).subscribe();
 
     this.updatesService.declarationCreated$
       .subscribe((createdDeclaration: Declaration) => {
@@ -57,6 +54,20 @@ export class RealTimeStateManagementService {
           }
           return d;
         });
+        this.declarations$.next(this.declarations);
+      });
+  }
+
+  fetchInitialState(): void {
+    if (this.isFetched) {
+      this.declarations$.next(this.declarations);
+      return;
+    }
+
+    this.isFetched = true;
+    this.declarationsService.getDeclarations()
+      .subscribe((declarations) => {
+        this.declarations = declarations;
         this.declarations$.next(this.declarations);
       });
   }

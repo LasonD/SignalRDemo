@@ -6,6 +6,7 @@ import { Observable, Subject, takeUntil } from "rxjs";
 import { filter, map } from "rxjs/operators";
 import { RealTimeUpdatesService } from "../services/real-time-updates.service";
 import { NotificationService } from "../services/notifications.service";
+import { RealTimeStateManagementService } from "../services/real-time-state-management.service";
 
 @Component({
   selector: 'app-declarations-list',
@@ -22,14 +23,11 @@ export class DeclarationsListComponent implements OnDestroy {
 
   constructor(private declarationsService: DeclarationsService,
               private jurisdictionService: JurisdictionsService,
-              private declarationSignalService: RealTimeUpdatesService,
-              private notificationsService: NotificationService) {}
+              private realTimeUpdatesService: RealTimeUpdatesService,
+              private notificationsService: NotificationService,
+              private realTimeStateManager: RealTimeStateManagementService) {}
 
   ngOnInit(): void {
-    this.declarationsService
-      .getDeclarations()
-      .subscribe((declarations) => (this.declarations = declarations));
-
     this.jurisdictionCodes$ = this.jurisdictionService.jurisdictions$
       .pipe(
         takeUntil(this.destroyed$),
@@ -50,60 +48,32 @@ export class DeclarationsListComponent implements OnDestroy {
       });
 
     this.subscribeToRealTimeEvents();
+    this.realTimeStateManager.fetchInitialState();
   }
 
   subscribeToRealTimeEvents() {
-    this.declarationSignalService.declarationCreated$
+    this.realTimeStateManager.declarations$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((declarations) => {
+        this.declarations = declarations;
+      })
+
+    this.realTimeUpdatesService.declarationCreated$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((createdDeclaration: Declaration) => {
-        this.declarations = [createdDeclaration, ...this.declarations];
         this.notificationsService.showInfo(`A new declaration for ${createdDeclaration.jurisdiction} was declared by ${createdDeclaration.declarantEmail}`, 'Declaration created');
       });
 
-    this.declarationSignalService.declarationUpdated$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((updatedDeclaration: Declaration) => {
-        this.declarations = this.declarations.map(d => d.id === updatedDeclaration.id ? updatedDeclaration : d);
-      });
-
-    this.declarationSignalService.declarationDeleted$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((deletedDeclarationId: string) => {
-        this.declarations = this.declarations.filter(d => d.id !== deletedDeclarationId);
-      });
-
-    this.declarationSignalService.declarationEditToggled$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((declarationId: string) => {
-        this.declarations = this.declarations.map((d) => {
-          if (d.id === declarationId) {
-            d.isLocked = true;
-          }
-          return d;
-        });
-      });
-
-    this.declarationEditChanges$ = this.declarationSignalService.declarationEditChange$
+    this.declarationEditChanges$ = this.realTimeUpdatesService.declarationEditChange$
       .pipe(takeUntil(this.destroyed$));
 
-    this.declarationSignalService.declarationEditCancelled$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((declarationId: string) => {
-        this.declarations = this.declarations.map((d) => {
-          if (d.id === declarationId) {
-            d.isLocked = false;
-          }
-          return d;
-        });
-      });
-
-    this.declarationSignalService.userConnected$
+    this.realTimeUpdatesService.userConnected$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((email) => {
         this.notificationsService.showInfo(`User ${email} connected.`);
       });
 
-    this.declarationSignalService.userDisconnected$
+    this.realTimeUpdatesService.userDisconnected$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((email) => {
         this.notificationsService.showInfo(`User ${email} disconnected.`);
@@ -135,15 +105,15 @@ export class DeclarationsListComponent implements OnDestroy {
   }
 
   onToggleEdit(declaration: Declaration) {
-    this.declarationSignalService.declarationEditToggled(declaration.id);
+    this.realTimeUpdatesService.declarationEditToggled(declaration.id);
   }
 
   onCancelEdit(declaration: Declaration) {
-    this.declarationSignalService.declarationEditCancelled(declaration.id);
+    this.realTimeUpdatesService.declarationEditCancelled(declaration.id);
   }
 
   onDeclarationChanges(change: DeclarationChange) {
-    this.declarationSignalService.declarationChanged(change);
+    this.realTimeUpdatesService.declarationChanged(change);
   }
 
   ngOnDestroy(): void {

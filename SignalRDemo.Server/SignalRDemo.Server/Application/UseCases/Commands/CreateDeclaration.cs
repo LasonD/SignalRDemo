@@ -68,7 +68,12 @@ public static class CreateDeclaration
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var dto = _mapper.Map<DeclarationDto>(newDeclaration);
+            var createdDeclaration = await _dbContext.Declarations
+                .Include(d => d.Declarant)
+                .Include(d => d.Jurisdiction)
+                .FirstOrDefaultAsync(d => d.Id == newDeclaration.Id, cancellationToken);
+
+            var dto = _mapper.Map<DeclarationDto>(createdDeclaration);
 
             await _notificationsService.NotifyDeclarationCreatedAsync(dto, cancellationToken);
 

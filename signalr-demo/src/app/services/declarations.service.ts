@@ -16,7 +16,6 @@ export class DeclarationsService {
   error$: Subject<any> = new Subject();
 
   constructor(private http: HttpClient) {
-
   }
 
   public getDeclarations() {

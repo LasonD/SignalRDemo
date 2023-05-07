@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, takeUntil } from "rxjs";
 import { DeclarationsService } from "../services/declarations.service";
-import { filter } from "rxjs/operators";
 import { DeclarationsColorService } from "../services/declarations-color.service";
+import { RealTimeStateManagementService } from "../services/real-time-state-management.service";
 
 @Component({
   selector: 'app-statistics',
@@ -20,19 +20,15 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   chartData!: any;
 
   constructor(private declarationsService: DeclarationsService,
-              private colorService: DeclarationsColorService) {
+              private colorService: DeclarationsColorService,
+              private realTimeStateManager: RealTimeStateManagementService) {
   }
 
   public ngOnInit() {
-    const declarations$ = this.declarationsService.getDeclarations()
-      .pipe(
-        takeUntil(this.destroyed$),
-        filter((d) => !!d),
-      );
-
-    declarations$
+    this.realTimeStateManager.declarations$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((declarations) => {
+        console.log('Declarations: ', declarations);
         this.declarationStats = declarations.reduce((result: DeclarationStats, d) => {
           const category = d.jurisdiction;
           if (!result[category]) {
