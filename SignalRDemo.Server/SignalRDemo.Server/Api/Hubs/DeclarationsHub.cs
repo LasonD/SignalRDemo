@@ -17,6 +17,8 @@ public interface IDeclarationsHub
     Task DeclarationEditChange(DeclarationChange change);
     Task DeclarationDeleted(string declarationId);
 
+    Task JurisdictionUpdated(JurisdictionDto jurisdiction);
+
     Task DeclarationEditToggled(string declarationId);
     Task DeclarationEditCancelled(string declarationId);
 

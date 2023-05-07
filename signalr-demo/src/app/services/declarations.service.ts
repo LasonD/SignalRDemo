@@ -46,7 +46,6 @@ export class DeclarationsService {
   }
 
   public updateDeclaration(id: string, updatedDeclaration: Declaration) {
-    console.log('In update declaration: ', id, updatedDeclaration);
     return this.http.put<Declaration>(`${environment.apiBaseUrl}/api/declarations/${id}`, updatedDeclaration)
       .pipe(
         tap(declaration => {

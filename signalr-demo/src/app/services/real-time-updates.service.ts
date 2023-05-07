@@ -7,11 +7,12 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { NotificationService } from "./notifications.service";
 import { AuthService } from "../auth/services/auth.service";
 import { filter, map } from "rxjs/operators";
+import { Jurisdiction } from "../models/jurisdiction.model";
 
 @Injectable({
   providedIn: 'root'
 })
-export class DeclarationsSignalService {
+export class RealTimeUpdatesService {
   private hubConnection: signalR.HubConnection;
   private token$ = new BehaviorSubject<string>(null!);
 
@@ -21,6 +22,7 @@ export class DeclarationsSignalService {
   declarationEditChange$ = new Subject<DeclarationChange>();
   declarationDeleted$ = new Subject<string>();
   declarationCreated$ = new Subject<Declaration>();
+  jurisdictionDisplayColorChanged$ = new Subject<Jurisdiction>()
 
   userConnected$ = new Subject<string>();
   userDisconnected$ = new Subject<string>();
@@ -76,6 +78,10 @@ export class DeclarationsSignalService {
 
     this.hubConnection.on('declarationEditChange', (change: DeclarationChange) => {
       this.declarationEditChange$.next(change);
+    });
+
+    this.hubConnection.on('jurisdictionUpdated', (updatedJurisdiction: Jurisdiction) => {
+      this.jurisdictionDisplayColorChanged$.next(updatedJurisdiction);
     });
   }
 

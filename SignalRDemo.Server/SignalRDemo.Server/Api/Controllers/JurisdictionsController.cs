@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SignalRDemo.Server.Application.Dto;
+using SignalRDemo.Server.Application.UseCases.Commands;
 using SignalRDemo.Server.Application.UseCases.Queries;
 
 namespace SignalRDemo.Server.Api.Controllers;
@@ -25,5 +27,19 @@ public class JurisdictionsController : ClientControllerBase
         var result = await _mediator.Send(command, cancellationToken);
 
         return Ok(result);
+    }
+
+    [HttpPut("")]
+    public async Task<IActionResult> UpdateJurisdiction(string jurisdictionCode, UpdateJurisdictionDto updateJurisdiction, CancellationToken cancellationToken)
+    {
+        var command = new UpdateJurisdiction.Command()
+        {
+            Color = updateJurisdiction.Color,
+            JurisdictionCode = jurisdictionCode,
+        };
+
+        var dto = await _mediator.Send(command, cancellationToken);
+
+        return Ok(dto);
     }
 }

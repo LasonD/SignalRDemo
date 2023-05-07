@@ -15,6 +15,7 @@ import { HeaderComponent } from './header/header.component';
 import { ToastrModule } from "ngx-toastr";
 import { StatisticsComponent } from './statistics/statistics.component';
 import { NgxChartsModule } from "@swimlane/ngx-charts";
+import { JurisdictionsComponent } from './jurisdictions/jurisdictions.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { NgxChartsModule } from "@swimlane/ngx-charts";
     CreateDeclarationComponent,
     HeaderComponent,
     StatisticsComponent,
+    JurisdictionsComponent,
   ],
   imports: [
     BrowserModule,

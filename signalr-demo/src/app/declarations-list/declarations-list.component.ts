@@ -4,7 +4,7 @@ import { DeclarationsService } from "../services/declarations.service";
 import { JurisdictionsService } from "../services/jurisdictions.service";
 import { Observable, Subject, takeUntil } from "rxjs";
 import { filter, map } from "rxjs/operators";
-import { DeclarationsSignalService } from "../services/declarations-signal.service";
+import { RealTimeUpdatesService } from "../services/real-time-updates.service";
 import { NotificationService } from "../services/notifications.service";
 
 @Component({
@@ -22,7 +22,7 @@ export class DeclarationsListComponent implements OnDestroy {
 
   constructor(private declarationsService: DeclarationsService,
               private jurisdictionService: JurisdictionsService,
-              private declarationSignalService: DeclarationsSignalService,
+              private declarationSignalService: RealTimeUpdatesService,
               private notificationsService: NotificationService) {}
 
   ngOnInit(): void {
